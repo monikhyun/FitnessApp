@@ -181,8 +181,13 @@ class CalendarPanel extends JPanel {
 
         // 운동 추가 패널
         JPanel addexec = new JPanel(new BorderLayout());
+        String[] exercate = {"All", "Back", "Chest", "Shoulder", "Lower-body"};
+        JComboBox exercateBox = new JComboBox(exercate);
         addexec.setBorder(BorderFactory.createTitledBorder("운동 리스트"));
+
+        infoPanel.add(exercateBox);
         infoPanel.add(addexec);
+
 
         Connection conn;
 
@@ -195,24 +200,39 @@ class CalendarPanel extends JPanel {
             JPanel buttonPanel = new JPanel();
             buttonPanel.setLayout(new GridLayout(0, 4, 10, 10)); // 4열로 배치
 
+            ArrayList<JButton> exercises = new ArrayList<>();
             while (rs.next()) {
                 int execid = rs.getInt("Execid");
                 String exerciseName = rs.getString("Execname");
                 String category = rs.getString("Category");
-
                 // 버튼 텍스트는 운동 이름과 카테고리를 함께 표시
                 JButton exerciseButton = new JButton(exerciseName + " (" + category + ")");
+                exerciseButton.setPreferredSize(new Dimension(40, 30));
+                exerciseButton.setMaximumSize(new Dimension(40, 30));  // 최대 크기 설정
+                exerciseButton.setMinimumSize(new Dimension(40, 30));
                 // 버튼에 카테고리 정보도 저장
                 exerciseButton.putClientProperty("category", category);
                 // 나중에 카테고리 정보가 필요할 때:
                 // String buttonCategory = (String) exerciseButton.getClientProperty("category");;
                 exerciseButton.addActionListener(e -> {
-                    addExercise(execid,exerciseName);
+                    addExercise(execid, exerciseName);
                     updateSummaryPanel(selectedDay, selectedMonth);
                 });
+                exercises.add(exerciseButton);
                 buttonPanel.add(exerciseButton);
             }
-
+            exercateBox.addActionListener(e -> {
+                String selectedCategory = (String) exercateBox.getSelectedItem();
+                buttonPanel.removeAll();
+                for(JButton button : exercises) {
+                    String buttoncate= (String) button.getClientProperty("category");
+                    if("All".equals(selectedCategory) || buttoncate.equals(selectedCategory)) {
+                        buttonPanel.add(button);
+                    }
+                }
+                buttonPanel.revalidate(); // 레이아웃 재계산
+                buttonPanel.repaint();
+            });
             JScrollPane scrollPane = new JScrollPane(buttonPanel);
             scrollPane.setPreferredSize(new Dimension(400, 300));
             addexec.add(scrollPane, BorderLayout.CENTER);
@@ -224,11 +244,11 @@ class CalendarPanel extends JPanel {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         return infoPanel;
     }
 
-    private void addExercise(int execid,String execname) {
+
+    private void addExercise(int execid, String execname) {
         try (Connection conn = DriverManager.getConnection(dburl, dbusr, dbpass)) {
             // UserExec 테이블에 운동 기록 추가
             String insertSql = "INSERT INTO UserExec (Userid,Execid,ExecName,Date) VALUES (?, ?, ?, ?)";
