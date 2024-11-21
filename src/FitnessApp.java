@@ -304,27 +304,6 @@ class FitnessApp extends JFrame implements ActionListener {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            FitnessApp app = new FitnessApp();
-            app.setVisible(true);
-        });
 
-        // 데이터베이스 연결 및 테스트 쿼리 수행 예시 (선택사항)
-        String url = "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp";
-        String username = "mih";
-        String password = "ansxoddl123";
-        try (Connection conn = DriverManager.getConnection(url, username, password)) {
-            System.out.println("데이터베이스에 연결되었습니다!");
-
-            String sql = "SELECT * FROM Calendar";
-            try (PreparedStatement ps = conn.prepareStatement(sql);
-                 ResultSet rs = ps.executeQuery()) {
-                while (rs.next()) {
-                    System.out.println("데이터: " + rs.getString(1));
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
     }
 }
