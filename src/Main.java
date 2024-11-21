@@ -1,3 +1,4 @@
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -18,6 +19,7 @@ class Login extends JFrame implements ActionListener{
     JButton b3;
     JButton b4;
     JButton b5;
+
     Login(String title){
         setTitle(title);
         Container ct = getContentPane();
@@ -28,6 +30,7 @@ class Login extends JFrame implements ActionListener{
         id.setBounds(170, 60, 120, 30);
         ct.add(l1);
         ct.add(id);
+
         JLabel l2 = new JLabel("PASSWD");
         passwd = new JPasswordField(8);
         l2.setBounds(80, 100, 70, 30);
@@ -40,6 +43,8 @@ class Login extends JFrame implements ActionListener{
         b3 = new JButton("회원가입");
         b4 = new JButton("아이디 찾기");
         b5 = new JButton("비밀번호 찾기");
+
+        passwd.addActionListener(this);
         b1.addActionListener(this);
         b2.addActionListener(this);
         b3.addActionListener(this);
@@ -83,6 +88,7 @@ class Login extends JFrame implements ActionListener{
             my.setLocation(400,300);
             my.show();
         }
+
         else if (s.equals("아이디 찾기")) {
             FindID findID = new FindID("아이디 찾기");
             findID.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -119,6 +125,7 @@ private boolean checklogin(String userid, String password) {
 }
 
 
+
 class NewMember extends JFrame implements ActionListener{
     JTextField id;
     JTextField name;
@@ -139,7 +146,7 @@ class NewMember extends JFrame implements ActionListener{
     private ButtonGroup goalGroup;
     private JComboBox<String> comboBox;
     private boolean idChecked = false;
-    private boolean allFieldsValid = false;
+
     NewMember(String title){
         setTitle(title);
         Container ct = getContentPane();
@@ -147,11 +154,9 @@ class NewMember extends JFrame implements ActionListener{
 
         JPanel top = new JPanel();
         top.setLayout(new GridLayout(10,1));
-
         JPanel p1 = new JPanel();
         p1.setLayout(new FlowLayout(FlowLayout.LEFT));
-
-        JLabel l1 = new JLabel("ID		:");
+        JLabel l1 = new JLabel("ID	        :");
         id = new JTextField(10);
         check = new JButton("중복 체크");
         check.addActionListener(this);
@@ -263,6 +268,7 @@ class NewMember extends JFrame implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         String s = e.getActionCommand();
+
         if(s.equals("취소")) {
             id.setText("");
             passwd.setText("");
@@ -436,6 +442,7 @@ class NewMember extends JFrame implements ActionListener{
         }
     }
 }
+
 
 // 아이디 찾기 클래스
 class FindID extends JFrame implements ActionListener {
@@ -669,6 +676,7 @@ class FindPassword extends JFrame implements ActionListener {
 }
 
 
+
 class MessageDialog extends JDialog implements ActionListener{
     JButton ok;
     MessageDialog(JFrame parent, String title, boolean mode, String msg)
@@ -699,4 +707,6 @@ public class Main {
         win.show();
     }
 
+
 }
+
