@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 package JavaProject;
 
+=======
+<<<<<<< HEAD
+>>>>>>> 4c01f3c (병합 준비)
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -23,6 +27,7 @@ class Login extends JFrame implements ActionListener{
     JButton b3;
     JButton b4;
     JButton b5;
+<<<<<<< HEAD
     Connection conn;
 
     public void DBLogin (){
@@ -33,6 +38,27 @@ class Login extends JFrame implements ActionListener{
         }
     }
 
+=======
+=======
+package JavaProject;
+
+import java.util.*;
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.event.*;
+import java.awt.event.*;
+import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+
+class Main extends JFrame implements ActionListener{
+    JTextField id;
+    JPasswordField passwd;
+    JButton b1,b2,b3,b4,b5;
+
+>>>>>>> 8d1cfce (병합 준비)
+>>>>>>> 4c01f3c (병합 준비)
     Login(String title){
         DBLogin();
         setTitle(title);
@@ -44,7 +70,14 @@ class Login extends JFrame implements ActionListener{
         id.setBounds(170, 60, 120, 30);
         ct.add(l1);
         ct.add(id);
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8d1cfce (병합 준비)
+>>>>>>> 4c01f3c (병합 준비)
         JLabel l2 = new JLabel("PASSWD");
         passwd = new JPasswordField(8);
         l2.setBounds(80, 100, 70, 30);
@@ -57,8 +90,15 @@ class Login extends JFrame implements ActionListener{
         b3 = new JButton("회원가입");
         b4 = new JButton("아이디 찾기");
         b5 = new JButton("비밀번호 찾기");
+<<<<<<< HEAD
 
         passwd.addActionListener(this);
+=======
+<<<<<<< HEAD
+=======
+        passwd.addActionListener(this);
+>>>>>>> 8d1cfce (병합 준비)
+>>>>>>> 4c01f3c (병합 준비)
         b1.addActionListener(this);
         b2.addActionListener(this);
         b3.addActionListener(this);
@@ -102,7 +142,11 @@ class Login extends JFrame implements ActionListener{
             my.setLocation(400,300);
             my.setVisible(true);
         }
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+>>>>>>> 4c01f3c (병합 준비)
         else if (s.equals("아이디 찾기")) {
             FindID findID = new FindID("아이디 찾기", conn);
             findID.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -111,11 +155,40 @@ class Login extends JFrame implements ActionListener{
             FindPassword findPassword = new FindPassword("비밀번호 찾기", conn);
             findPassword.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             findPassword.setVisible(true);
+=======
+        else {}
+    }
+    private boolean checklogin(String userid, String password) {
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123")) {
+
+            String sql = "SELECT * FROM User WHERE Userid = ? AND Password = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, userid);
+            pstmt.setString(2, password);
+
+            ResultSet rs = pstmt.executeQuery();
+            boolean result = rs.next();
+            return result;
+
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "데이터베이스 연결 오류가 발생했습니다.",
+                    "오류",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+>>>>>>> 8d1cfce (병합 준비)
         }
     }
 
+<<<<<<< HEAD
     private boolean checklogin(String userid, String password) {
         try  {
+=======
+<<<<<<< HEAD
+private boolean checklogin(String userid, String password) {
+    try (Connection conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123")) {
+>>>>>>> 4c01f3c (병합 준비)
 
             String sql = "SELECT * FROM User WHERE Userid = ? AND Password = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -142,6 +215,8 @@ class Login extends JFrame implements ActionListener{
 
 
 
+=======
+>>>>>>> 8d1cfce (병합 준비)
 class NewMember extends JFrame implements ActionListener{
     JTextField id;
     JTextField name;
@@ -162,6 +237,7 @@ class NewMember extends JFrame implements ActionListener{
     private ButtonGroup goalGroup;
     private JComboBox<String> comboBox;
     private boolean idChecked = false;
+<<<<<<< HEAD
 
     Connection conn;
 
@@ -174,23 +250,46 @@ class NewMember extends JFrame implements ActionListener{
         }
     }
     NewMember(String title, Connection conn){
+=======
+<<<<<<< HEAD
+    private boolean allFieldsValid = false;
+=======
+>>>>>>> 8d1cfce (병합 준비)
+    NewMember(String title){
+>>>>>>> 4c01f3c (병합 준비)
         setTitle(title);
         DBLogin();
         Container ct = getContentPane();
         ct.setLayout(new BorderLayout(0, 20));
+<<<<<<< HEAD
 
         JPanel top = new JPanel();
         top.setLayout(new GridLayout(10,1));
         JPanel p1 = new JPanel();
         p1.setLayout(new FlowLayout(FlowLayout.LEFT));
+<<<<<<< HEAD
         JLabel l1 = new JLabel("ID	        :");
+=======
+
+        JLabel l1 = new JLabel("ID		:");
+=======
+        JPanel top = new JPanel();
+        top.setLayout(new GridLayout(10,1));
+        JPanel p1 = new JPanel();
+        p1.setLayout(new FlowLayout(FlowLayout.LEFT));
+        JLabel l1 = new JLabel("ID	        :");
+>>>>>>> 8d1cfce (병합 준비)
+>>>>>>> 4c01f3c (병합 준비)
         id = new JTextField(10);
         check = new JButton("중복 체크");
         check.addActionListener(this);
         p1.add(l1);
         p1.add(id);
         p1.add(check);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8d1cfce (병합 준비)
         Panel p2 = new Panel();
         p2.setLayout(new FlowLayout(FlowLayout.LEFT));
         JLabel l2 = new JLabel("PASSWORD :");
@@ -295,7 +394,14 @@ class NewMember extends JFrame implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         String s = e.getActionCommand();
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8d1cfce (병합 준비)
+>>>>>>> 4c01f3c (병합 준비)
         if(s.equals("취소")) {
             id.setText("");
             passwd.setText("");
@@ -315,7 +421,10 @@ class NewMember extends JFrame implements ActionListener{
             saveUserToDatabase();
         }
     }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8d1cfce (병합 준비)
     private void saveUserToDatabase() {
         try  {
             String sql = "INSERT INTO User (Userid, Password, Username, Weight, Height, Age, Gender, GoalType, Keyqusid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
@@ -468,7 +577,11 @@ class NewMember extends JFrame implements ActionListener{
     }
 }
 
+<<<<<<< HEAD
 
+=======
+<<<<<<< HEAD
+>>>>>>> 4c01f3c (병합 준비)
 // 아이디 찾기 클래스
 class FindID extends JFrame implements ActionListener {
     JTextField nameField, answerField; // 이름과 힌트 답변 입력 필드
@@ -700,7 +813,12 @@ class FindPassword extends JFrame implements ActionListener {
 }
 
 
+<<<<<<< HEAD
 
+=======
+=======
+>>>>>>> 8d1cfce (병합 준비)
+>>>>>>> 4c01f3c (병합 준비)
 class MessageDialog extends JDialog implements ActionListener{
     JButton ok;
     MessageDialog(JFrame parent, String title, boolean mode, String msg)
@@ -723,6 +841,10 @@ class MessageDialog extends JDialog implements ActionListener{
 
 }
 public class Main {
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8d1cfce (병합 준비)
     public static void main(String[] args) {
         Login win = new Login("로그인");
         win.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -732,7 +854,15 @@ public class Main {
 
     }
 
+<<<<<<< HEAD
 
 
 }
 
+=======
+<<<<<<< HEAD
+}
+=======
+}
+>>>>>>> 8d1cfce (병합 준비)
+>>>>>>> 4c01f3c (병합 준비)

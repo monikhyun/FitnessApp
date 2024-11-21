@@ -19,6 +19,7 @@ class CalendarPanel extends JPanel {
     private String loginedid, loginedpass;
 
     private ArrayList<String> dailyExercises = new ArrayList<>();
+<<<<<<< HEAD
 
     Connection conn;
 
@@ -27,6 +28,15 @@ class CalendarPanel extends JPanel {
         this.loginedid = loginedid;
         this.loginedpass = loginedpass;
         this.conn = conn;
+=======
+    private static final String dburl = "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp";
+    private static final String dbusr = "mih";
+    private static final String dbpass = "ansxoddl123";
+
+    public CalendarPanel(String loginedid, String loginedpass) {
+        this.loginedid = loginedid;
+        this.loginedpass = loginedpass;
+>>>>>>> 4c01f3c (병합 준비)
 
         setLayout(new GridLayout(1, 2));  // 1행 2열의 그리드 레이아웃
         currentCalendar = Calendar.getInstance(); // 현재 날짜로 초기화
@@ -146,7 +156,11 @@ class CalendarPanel extends JPanel {
                     lastClickedButton.setOpaque(true);
                     lastClickedButton.setFont(lastClickedButton.getFont().deriveFont(PLAIN));
                     selectedDay = finalI; // 선택된 날짜 저장
+<<<<<<< HEAD
                     selectedMonth = finalMonth;
+=======
+                    int selectedMonth = finalMonth;
+>>>>>>> 4c01f3c (병합 준비)
                     updateSummaryPanel(selectedDay, selectedMonth); // 선택한 날짜에 대한 정보 업데이트
                     dateButton.setBackground(new Color(255, 255, 200));
                     dateButton.setFont(dateButton.getFont().deriveFont(Font.BOLD));
@@ -173,15 +187,20 @@ class CalendarPanel extends JPanel {
         Calendar today = Calendar.getInstance();
         // 오늘의 운동 요약
         JPanel summaryPanel = new JPanel(new BorderLayout());
+<<<<<<< HEAD
         JPanel resetPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         summaryPanel.setBorder(BorderFactory.createTitledBorder("오늘의 운동"));
 
         // 초기화 버튼
         JButton reset = new JButton("초기화");
+=======
+        summaryPanel.setBorder(BorderFactory.createTitledBorder("오늘의 운동"));
+>>>>>>> 4c01f3c (병합 준비)
         summaryArea = new JTextArea(5, 20);
         summaryArea.setEditable(false);
         updateSummaryPanel(today.get(Calendar.DAY_OF_MONTH), today.get(Calendar.MONTH) + 1);
         summaryPanel.add(new JScrollPane(summaryArea));
+<<<<<<< HEAD
         summaryPanel.add(resetPanel, BorderLayout.EAST);
         resetPanel.add(reset);
         infoPanel.add(summaryPanel);
@@ -189,6 +208,10 @@ class CalendarPanel extends JPanel {
         // 운동초기화 버튼 이벤트
         reset.addActionListener(e -> resetData(conn));
 
+=======
+        infoPanel.add(summaryPanel);
+
+>>>>>>> 4c01f3c (병합 준비)
         // 운동 추가 패널
         JPanel addexec = new JPanel(new BorderLayout());
         String[] exercate = {"All", "Back", "Chest", "Shoulder", "Lower-body"};
@@ -198,7 +221,15 @@ class CalendarPanel extends JPanel {
         infoPanel.add(exercateBox);
         infoPanel.add(addexec);
 
+<<<<<<< HEAD
         try {
+=======
+
+        Connection conn;
+
+        try {
+            conn = DriverManager.getConnection(dburl, dbusr, dbpass);
+>>>>>>> 4c01f3c (병합 준비)
             String sql = "SELECT Execid,Execname,Category FROM Exec";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -230,9 +261,15 @@ class CalendarPanel extends JPanel {
             exercateBox.addActionListener(e -> {
                 String selectedCategory = (String) exercateBox.getSelectedItem();
                 buttonPanel.removeAll();
+<<<<<<< HEAD
                 for (JButton button : exercises) {
                     String buttoncate = (String) button.getClientProperty("category");
                     if ("All".equals(selectedCategory) || buttoncate.equals(selectedCategory)) {
+=======
+                for(JButton button : exercises) {
+                    String buttoncate= (String) button.getClientProperty("category");
+                    if("All".equals(selectedCategory) || buttoncate.equals(selectedCategory)) {
+>>>>>>> 4c01f3c (병합 준비)
                         buttonPanel.add(button);
                     }
                 }
@@ -245,7 +282,11 @@ class CalendarPanel extends JPanel {
 
             rs.close();
             ps.close();
+<<<<<<< HEAD
 
+=======
+            conn.close();
+>>>>>>> 4c01f3c (병합 준비)
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -253,6 +294,7 @@ class CalendarPanel extends JPanel {
         return infoPanel;
     }
 
+<<<<<<< HEAD
     // 운동이름버튼 클릭시 DB에 저장 메서드
     private void addExercise(int execid, String execname) {
         try {
@@ -270,6 +312,18 @@ class CalendarPanel extends JPanel {
             // UserExec 테이블에 운동 기록 추가
             String insertSql = "INSERT INTO UserExec (Userid, Execid, ExecName, RecordDate) VALUES (?, ?, ?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
+=======
+
+    private void addExercise(int execid, String execname) {
+        try (Connection conn = DriverManager.getConnection(dburl, dbusr, dbpass)) {
+            // UserExec 테이블에 운동 기록 추가
+            String insertSql = "INSERT INTO UserExec (Userid,Execid,ExecName,Date) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
+                // 선택된 날짜를 SQL date 형식으로 변환
+                String dateStr = String.format("%d-%02d-%02d", selectedYear, selectedMonth, selectedDay);
+                Date sqlDate = Date.valueOf(dateStr);
+
+>>>>>>> 4c01f3c (병합 준비)
                 ps.setString(1, loginedid);
                 ps.setInt(2, execid);
                 ps.setString(3, execname);
@@ -279,6 +333,7 @@ class CalendarPanel extends JPanel {
 
                 // UI 업데이트를 위해 운동 목록에 추가
                 dailyExercises.add(execname);
+<<<<<<< HEAD
 
                 String recordsql = "INSERT INTO ExecRecord(Userid, Execid, ExecDate) VALUES (?, ?, ?)";
                 try (PreparedStatement pst = conn.prepareStatement(recordsql)) {
@@ -294,6 +349,11 @@ class CalendarPanel extends JPanel {
 
         } catch (SQLException e) {
             e.printStackTrace(); // 예외 스택 추적 출력
+=======
+                JOptionPane.showMessageDialog(this, "운동이 추가되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (SQLException e) {
+>>>>>>> 4c01f3c (병합 준비)
             JOptionPane.showMessageDialog(this, "운동 추가 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -302,6 +362,7 @@ class CalendarPanel extends JPanel {
         summaryArea.setText(String.format("%d월 %d일의 운동 기록:\n", month, day));
 
         // 데이터베이스에서 해당 날짜의 운동 기록을 조회
+<<<<<<< HEAD
 
         String sql = "SELECT Execname FROM UserExec WHERE UserID = ? AND RecordDate = ?";
         try (PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -318,10 +379,29 @@ class CalendarPanel extends JPanel {
                 }
             }
 
+=======
+        try (Connection conn = DriverManager.getConnection(dburl, dbusr, dbpass)) {
+            String sql = "SELECT Execname FROM UserExec WHERE UserID = ? AND DATE = ?";
+            try (PreparedStatement ps = conn.prepareStatement(sql)) {
+                String dateStr = String.format("%d-%02d-%02d", selectedYear, month, day);
+                Date sqlDate = Date.valueOf(dateStr);
+
+                ps.setString(1, loginedid);
+                ps.setDate(2, sqlDate);
+
+                try (ResultSet rs = ps.executeQuery()) {
+                    while (rs.next()) {
+                        String exerciseName = rs.getString("ExecName");
+                        summaryArea.append("- " + exerciseName + "\n");
+                    }
+                }
+            }
+>>>>>>> 4c01f3c (병합 준비)
         } catch (SQLException e) {
             summaryArea.append("\n운동 기록을 불러오는 중 오류가 발생했습니다.");
         }
     }
+<<<<<<< HEAD
 
     private void resetData(Connection con) {
         int result = JOptionPane.showConfirmDialog(this,
@@ -364,4 +444,6 @@ class CalendarPanel extends JPanel {
         }
         dailyExercises.clear();
     }
+=======
+>>>>>>> 4c01f3c (병합 준비)
 }
