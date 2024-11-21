@@ -59,7 +59,20 @@ class Login extends JFrame implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         String s = e.getActionCommand();
-        if(s.equals("취소")) {
+        if(s.equals("로그인")||e.getSource()==passwd) {
+            String userId = id.getText().trim();
+            String password = new String(passwd.getPassword());
+
+            if (checklogin(userId, password)) {
+                FitnessApp app = new FitnessApp(userId,password);
+                app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                app.setSize(1500, 1024);
+                app.setLocationRelativeTo(null);
+                app.setVisible(true);
+                this.dispose();
+            }
+        }
+        else if(s.equals("취소")) {
             id.setText("");
             passwd.setText("");
         }
@@ -81,6 +94,30 @@ class Login extends JFrame implements ActionListener{
         }
     }
 }
+
+private boolean checklogin(String userid, String password) {
+    try (Connection conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123")) {
+
+        String sql = "SELECT * FROM User WHERE Userid = ? AND Password = ?";
+        PreparedStatement pstmt = conn.prepareStatement(sql);
+        pstmt.setString(1, userid);
+        pstmt.setString(2, password);
+
+        ResultSet rs = pstmt.executeQuery();
+        boolean result = rs.next();
+        return result;
+
+    } catch (SQLException ex) {
+        ex.printStackTrace();
+        JOptionPane.showMessageDialog(this,
+                "데이터베이스 연결 오류가 발생했습니다.",
+                "오류",
+                JOptionPane.ERROR_MESSAGE);
+        return false;
+    }
+}
+}
+
 
 class NewMember extends JFrame implements ActionListener{
     JTextField id;
