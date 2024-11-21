@@ -1,13 +1,14 @@
-
-import java.util.*;
-import java.awt.*;
 import javax.swing.*;
-import javax.swing.event.*;
-import java.awt.event.*;
-import java.sql.*;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 class Login extends JFrame implements ActionListener{
     JTextField id;
@@ -27,7 +28,6 @@ class Login extends JFrame implements ActionListener{
         id.setBounds(170, 60, 120, 30);
         ct.add(l1);
         ct.add(id);
-
         JLabel l2 = new JLabel("PASSWD");
         passwd = new JPasswordField(8);
         l2.setBounds(80, 100, 70, 30);
@@ -70,7 +70,15 @@ class Login extends JFrame implements ActionListener{
             my.setLocation(400,300);
             my.show();
         }
-        else {}
+        else if (s.equals("아이디 찾기")) {
+            FindID findID = new FindID("아이디 찾기");
+            findID.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            findID.setVisible(true);
+        } else if (s.equals("비밀번호 찾기")) {
+            FindPassword findPassword = new FindPassword("비밀번호 찾기");
+            findPassword.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            findPassword.setVisible(true);
+        }
     }
 }
 
@@ -99,10 +107,13 @@ class NewMember extends JFrame implements ActionListener{
         setTitle(title);
         Container ct = getContentPane();
         ct.setLayout(new BorderLayout(0, 20));
+
         JPanel top = new JPanel();
         top.setLayout(new GridLayout(10,1));
+
         JPanel p1 = new JPanel();
         p1.setLayout(new FlowLayout(FlowLayout.LEFT));
+
         JLabel l1 = new JLabel("ID		:");
         id = new JTextField(10);
         check = new JButton("중복 체크");
@@ -387,13 +398,239 @@ class NewMember extends JFrame implements ActionListener{
             JOptionPane.showMessageDialog(this, "데이터베이스 연결 실패", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
-
-
-
-
-
-
 }
+
+// 아이디 찾기 클래스
+class FindID extends JFrame implements ActionListener {
+    JTextField nameField, answerField; // 이름과 힌트 답변 입력 필드
+    JComboBox<String> comboBox; // 힌트 질문 선택 콤보박스
+    JButton findButton, cancelButton; // 찾기 및 취소 버튼
+
+    FindID(String title) {
+        setTitle(title);
+        Container ct = getContentPane();
+        ct.setLayout(new GridLayout(4, 1));
+
+        // 이름 입력 패널 구성
+        JPanel namePanel = new JPanel();
+        JLabel nameLabel = new JLabel("이름:");
+        nameField = new JTextField(15);
+        namePanel.add(nameLabel);
+        namePanel.add(nameField);
+
+        // 힌트 질문 선택 패널 구성
+        JPanel hintPanel = new JPanel();
+        JLabel hintLabel = new JLabel("힌트 질문:");
+        comboBox = new JComboBox<>(loadKeyQuestionsFromDB()); // DB에서 힌트 질문 로드
+        hintPanel.add(hintLabel);
+        hintPanel.add(comboBox);
+
+        // 힌트 답변 입력 패널 구성asdasdasdasda
+        JPanel answerPanel = new JPanel();
+        JLabel answerLabel = new JLabel("힌트 답: ");
+        answerField = new JTextField(15);
+        answerPanel.add(answerLabel);
+        answerPanel.add(answerField);
+
+        // 버튼 패널 구성
+        JPanel buttonPanel = new JPanel();
+        findButton = new JButton("찾기"); // 찾기 버튼 생성
+        cancelButton = new JButton("취소"); // 취소 버튼 생성
+        findButton.addActionListener(this); // 이벤트 리스너 등록
+        cancelButton.addActionListener(this);
+        buttonPanel.add(findButton);
+        buttonPanel.add(cancelButton);
+
+        ct.add(namePanel);
+        ct.add(hintPanel);
+        ct.add(answerPanel);
+        ct.add(buttonPanel);
+
+        setSize(400, 250);
+        setLocationRelativeTo(null); // 가운데 정렬
+    }
+
+    // 버튼 클릭 이벤트 처리
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == cancelButton) { // 취소 버튼 클릭 시 창 닫기
+            dispose();
+        } else if (e.getSource() == findButton) { // 찾기 버튼 클릭 시 아이디 찾기 실행
+            findID();
+        }
+    }
+
+    private void findID() {
+        try (Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp",
+                "mih", "ansxoddl123")) {
+
+            // SQL 쿼리 준비
+            String sql = "SELECT u.Userid FROM User u JOIN Ukey k ON u.Userid = k.Userid WHERE u.Username = ? AND k.Keyqusid = ? AND k.Keyanswer = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, nameField.getText().trim()); // 이름 입력값
+            pstmt.setInt(2, comboBox.getSelectedIndex()); // 선택한 힌트 질문의 인덱스
+            pstmt.setString(3, answerField.getText().trim()); // 힌트 답변 입력값
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) { // 일치하는 아이디가 있는 경우
+                String foundID = rs.getString("Userid");
+                JOptionPane.showMessageDialog(this, "찾은 아이디: " + foundID, "아이디 찾기 성공", JOptionPane.INFORMATION_MESSAGE);
+            } else { // 일치하는 아이디가 없는 경우
+                JOptionPane.showMessageDialog(this, "일치하는 아이디가 없습니다.", "아이디 찾기 실패", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) { // 예외 처리
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "오류 발생", "오류", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private String[] loadKeyQuestionsFromDB() {
+        try (Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp",
+                "mih", "ansxoddl123")) {
+
+            String sql = "SELECT KeyQus FROM KeyQus";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+
+
+            ArrayList<String> questions = new ArrayList<>();
+            questions.add("힌트를 선택하세요");
+
+            while (rs.next()) {
+                questions.add(rs.getString("KeyQus"));
+            }
+
+            rs.close();
+            pstmt.close();
+            conn.close();
+
+            return questions.toArray(new String[0]); // 리스트를 배열로 변환 후 반환
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return new String[] {"Error loading hints"};
+        }
+    }
+}
+
+// 비밀번호 찾기 클래스
+class FindPassword extends JFrame implements ActionListener {
+    JTextField idField, answerField; // 아이디와 힌트 답변 입력 필드
+    JComboBox<String> comboBox; // 힌트 질문 선택 콤보박스
+    JButton findButton, cancelButton; // 찾기 및 취소 버튼
+
+
+    FindPassword(String title) {
+        setTitle(title);
+        Container ct = getContentPane();
+        ct.setLayout(new GridLayout(4, 1));
+
+        // 아이디 입력 패널 구성
+        JPanel idPanel = new JPanel();
+        JLabel idLabel = new JLabel("아이디:");
+        idField = new JTextField(15); // 사용자 입력용 텍스트 필드
+        idPanel.add(idLabel);
+        idPanel.add(idField);
+
+        // 힌트 질문 선택 패널 구성
+        JPanel hintPanel = new JPanel();
+        JLabel hintLabel = new JLabel("힌트 질문:");
+        comboBox = new JComboBox<>(loadKeyQuestionsFromDB()); // DB에서 힌트 질문 로드
+        hintPanel.add(hintLabel);
+        hintPanel.add(comboBox);
+
+        // 힌트 답변 입력 패널 구성
+        JPanel answerPanel = new JPanel();
+        JLabel answerLabel = new JLabel("힌트 답:");
+        answerField = new JTextField(15); // 사용자 입력용 텍스트 필드
+        answerPanel.add(answerLabel);
+        answerPanel.add(answerField);
+
+        // 버튼 패널 구성
+        JPanel buttonPanel = new JPanel();
+        findButton = new JButton("찾기");
+        cancelButton = new JButton("취소");
+        findButton.addActionListener(this);
+        cancelButton.addActionListener(this);
+        buttonPanel.add(findButton);
+        buttonPanel.add(cancelButton);
+
+        // 모든 패널을 컨테이너에 추가
+        ct.add(idPanel);
+        ct.add(hintPanel);
+        ct.add(answerPanel);
+        ct.add(buttonPanel);
+
+        setSize(400, 250);
+        setLocationRelativeTo(null); // 화면 중앙에 위치
+    }
+
+    // 버튼 클릭 이벤트 처리
+    public void actionPerformed(ActionEvent e) {
+        if (e.getSource() == cancelButton) { // 취소 버튼 클릭 시 창 닫기
+            dispose();
+        } else if (e.getSource() == findButton) { // 찾기 버튼 클릭 시 비밀번호 찾기 실행
+            findPassword();
+        }
+    }
+
+    private void findPassword() {
+        try (Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp",
+                "mih", "ansxoddl123")) {
+
+            // SQL 쿼리 준비
+            String sql = "SELECT u.Password FROM User u JOIN Ukey k ON u.Userid = k.Userid WHERE u.Userid = ? AND k.Keyqusid = ? AND k.Keyanswer = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, idField.getText().trim()); // 아이디 입력값
+            pstmt.setInt(2, comboBox.getSelectedIndex()); // 선택한 힌트 질문의 인덱스
+            pstmt.setString(3, answerField.getText().trim()); // 힌트 답변 입력값
+
+            ResultSet rs = pstmt.executeQuery();
+            if (rs.next()) { // 일치하는 비밀번호가 있는 경우
+                String foundPassword = rs.getString("Password");
+                JOptionPane.showMessageDialog(this, "찾은 비밀번호: " + foundPassword, "비밀번호 찾기 성공", JOptionPane.INFORMATION_MESSAGE);
+            } else { // 일치하는 비밀번호가 없는 경우
+                JOptionPane.showMessageDialog(this, "일치하는 비밀번호가 없습니다.", "비밀번호 찾기 실패", JOptionPane.ERROR_MESSAGE);
+            }
+        } catch (Exception ex) { // 예외 처리
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "오류 발생", "오류", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    // DB에서 힌트 질문 로드
+    private String[] loadKeyQuestionsFromDB() {
+        try (Connection conn = DriverManager.getConnection(
+                "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp",
+                "mih", "ansxoddl123")) {
+
+            String sql = "SELECT KeyQus FROM KeyQus";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+
+            // 힌트 질문 저장용 리스트
+            ArrayList<String> questions = new ArrayList<>();
+            questions.add("힌트를 선택하세요"); // 기본 항목 추가
+
+            while (rs.next()) { // DB에서 질문 가져오기
+                questions.add(rs.getString("KeyQus"));
+            }
+
+            rs.close();
+            pstmt.close();
+            conn.close();
+
+            return questions.toArray(new String[0]); // 리스트를 배열로 변환 후 반환
+
+        } catch (Exception ex) { // 예외 처리
+            ex.printStackTrace();
+            return new String[] {"Error loading hints"};
+        }
+    }
+}
+
 
 class MessageDialog extends JDialog implements ActionListener{
     JButton ok;
@@ -417,7 +654,6 @@ class MessageDialog extends JDialog implements ActionListener{
 
 }
 public class Main {
-
     public static void main(String[] args) {
         Login win = new Login("로그인");
         win.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
