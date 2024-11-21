@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Calendar;
+import java.sql.*;
 
 public class FitnessApp extends JFrame implements ActionListener {
     private CardLayout cardLayout;
@@ -39,7 +41,7 @@ public class FitnessApp extends JFrame implements ActionListener {
 
         // 각 화면 패널 추가
         mainPanel.add(new CalendarPanel(loginedid,loginedpass), "Calendar");
-        mainPanel.add(new StatsPanel(), "Record");
+        mainPanel.add(new RecordPanel(loginedid, loginedpass), "Record");
         mainPanel.add(new StatsPanel(), "Stats");
         mainPanel.add(new StatsPanel(), "Diet");
         mainPanel.add(createPanel("Play 화면"), "Play"); // Play 화면은 아직 미구현

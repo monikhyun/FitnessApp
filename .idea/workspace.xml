@@ -4,25 +4,65 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0ba863dd-d63f-4a92-8c11-7893a3a37210" name="변경" comment="전체 보수" />
+    <list default="true" id="0ba863dd-d63f-4a92-8c11-7893a3a37210" name="변경" comment="전체 보수">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/FitnessApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/FitnessApp.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel$NutritionChartPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel$NutritionChartPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel$VolumeChartPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel$VolumeChartPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel$WorkoutChartPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel$WorkoutChartPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/example/FitnessApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/example/FitnessApp.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/monikhyun/FitnessApp.git",
-    "accountId": "e27fb9ad-23f3-4c59-9690-ea514d8e25f6"
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "monikhyun"
   }
 }]]></component>
+  <component name="GithubProjectSettings">
+    <option name="branchProtectionPatterns">
+      <list>
+        <option value="main" />
+      </list>
+    </option>
+  </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/monikhyun/FitnessApp.git&quot;,
+    &quot;accountId&quot;: &quot;e27fb9ad-23f3-4c59-9690-ea514d8e25f6&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="2p9MGEPgFr6tegprPXHdprp8vwB" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "git-widget-placeholder": "calendar",
-    "last_opened_file_path": "C:/Users/mih20/OneDrive/바탕 화면/mysql-connector-j-9.1.0/mysql-connector-j-9.1.0.jar",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "dev",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/mih20/OneDrive/바탕 화면/과제물/FitnessApp/src/com/example",
     "project.structure.last.edited": "라이브러리",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
@@ -35,6 +75,7 @@
       <recent name="C:\Users\mih20\OneDrive\바탕 화면\과제물\FitnessApp\src\com\example" />
     </key>
   </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task id="LOCAL-00001" summary="전체 보수">
       <option name="closed" value="true" />
@@ -43,6 +84,13 @@
       <option name="presentableId" value="LOCAL-00001" />
       <option name="project" value="LOCAL" />
       <updated>1732173673944</updated>
+    </task>
+    <task active="true" id="Default" summary="디폴트 작업">
+      <changelist id="0ba863dd-d63f-4a92-8c11-7893a3a37210" name="변경" comment="전체 보수" />
+      <created>1732173740839</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1732173740839</updated>
     </task>
     <option name="localTasksCounter" value="2" />
     <servers />
