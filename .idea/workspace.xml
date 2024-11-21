@@ -4,68 +4,51 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d93a7022-fd77-4cc7-88f2-8e6c4cf3c017" name="변경" comment="" />
+    <list default="true" id="0ba863dd-d63f-4a92-8c11-7893a3a37210" name="변경" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/LoginFrame/FindID.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/LoginFrame/FindPassword.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/LoginFrame/Login.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/LoginFrame/Main.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/LoginFrame/MessageDialog.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/LoginFrame/NewMember$1.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/LoginFrame/NewMember$2.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/LoginFrame/NewMember.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CalenderPanel.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="Git.Settings">
-    <option name="RECENT_BRANCH_BY_REPOSITORY">
-      <map>
-        <entry key="$PROJECT_DIR$" value="record" />
-      </map>
-    </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "monikhyun"
-  }
-}]]></component>
   <component name="GithubPullRequestsUISettings"><![CDATA[{
   "selectedUrlAndAccountId": {
     "url": "https://github.com/monikhyun/FitnessApp.git",
     "accountId": "e27fb9ad-23f3-4c59-9690-ea514d8e25f6"
   }
 }]]></component>
-  <component name="ProjectColorInfo">{
-  &quot;customColor&quot;: &quot;&quot;,
-  &quot;associatedIndex&quot;: 6
-}</component>
-  <component name="ProjectId" id="2p43jnWxToKzydbCaTNdM52Tax1" />
-  <component name="ProjectViewState">
-    <option name="hideEmptyMiddlePackages" value="true" />
-    <option name="showLibraryContents" value="true" />
-  </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "record",
-    "kotlin-language-version-configured": "true",
-    "project.structure.last.edited": "모듈",
+    "git-widget-placeholder": "calendar",
+    "last_opened_file_path": "C:/Users/mih20/OneDrive/바탕 화면/mysql-connector-j-9.1.0/mysql-connector-j-9.1.0.jar",
+    "project.structure.last.edited": "라이브러리",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "vcs.Git",
-    "애플리케이션.Main.executor": "Run"
+    "애플리케이션.Main.executor": "Run",
+    "애플리케이션.StatsPanel.executor": "Run"
   }
 }]]></component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Users\mih20\OneDrive\바탕 화면\과제물\FitnessApp\src" />
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\mih20\OneDrive\바탕 화면\과제물\FitnessApp\src\com\example" />
     </key>
   </component>
-  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
-    <task active="true" id="Default" summary="디폴트 작업">
-      <changelist id="d93a7022-fd77-4cc7-88f2-8e6c4cf3c017" name="변경" comment="" />
-      <created>1732011658889</created>
-      <option name="number" value="Default" />
-      <option name="presentableId" value="Default" />
-      <updated>1732011658889</updated>
-    </task>
     <servers />
   </component>
 </project>

@@ -1,4 +1,4 @@
-
+package JavaProject.com.example;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -9,6 +9,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 class Login extends JFrame implements ActionListener{
@@ -86,7 +87,7 @@ class Login extends JFrame implements ActionListener{
             my.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             my.setSize(520,500);
             my.setLocation(400,300);
-            my.show();
+            my.setVisible(true);
         }
 
         else if (s.equals("아이디 찾기")) {
@@ -99,30 +100,32 @@ class Login extends JFrame implements ActionListener{
             findPassword.setVisible(true);
         }
     }
-}
 
-private boolean checklogin(String userid, String password) {
-    try (Connection conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123")) {
+    private boolean checklogin(String userid, String password) {
+        try (Connection conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123")) {
 
-        String sql = "SELECT * FROM User WHERE Userid = ? AND Password = ?";
-        PreparedStatement pstmt = conn.prepareStatement(sql);
-        pstmt.setString(1, userid);
-        pstmt.setString(2, password);
+            String sql = "SELECT * FROM User WHERE Userid = ? AND Password = ?";
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, userid);
+            pstmt.setString(2, password);
 
-        ResultSet rs = pstmt.executeQuery();
-        boolean result = rs.next();
-        return result;
+            ResultSet rs = pstmt.executeQuery();
+            boolean result = rs.next();
+            return result;
 
-    } catch (SQLException ex) {
-        ex.printStackTrace();
-        JOptionPane.showMessageDialog(this,
-                "데이터베이스 연결 오류가 발생했습니다.",
-                "오류",
-                JOptionPane.ERROR_MESSAGE);
-        return false;
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                    "데이터베이스 연결 오류가 발생했습니다.",
+                    "오류",
+                    JOptionPane.ERROR_MESSAGE);
+            return false;
+        }
     }
 }
-}
+
+
+
 
 
 
@@ -704,7 +707,7 @@ public class Main {
         win.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         win.setSize(350, 300);
         win.setLocation(100, 200);
-        win.show();
+        win.setVisible(true);
     }
 
 
