@@ -1,4 +1,4 @@
-package JavaProject.com.example;
+package com.example;
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
