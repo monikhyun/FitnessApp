@@ -173,58 +173,13 @@ class DietPanel extends JPanel {
     private void changeMonth(int delta) {
         calendar.add(Calendar.MONTH, delta);
         dateDisplay.setText(getCurrentDateString());
-        loadFoodDataForSelectedDate();
     }
 
     // 일 변경 메소드
     private void changeDay(int delta) {
         calendar.add(Calendar.DAY_OF_MONTH, delta);
         dateDisplay.setText(getCurrentDateString());
-        loadFoodDataForSelectedDate();
     }
-
-    // 날짜 변경 시 해당 날짜에 저장된 음식 데이터 로드
-    private void loadFoodDataForSelectedDate() {
-        String currentDate = getCurrentDateString();
-
-        // 해당 날짜의 FoodDataForDate 객체를 검색
-        FoodDataForDate foodDataForDate = findFoodDataForDate(currentDate);
-        
-        breakfastArea.setText("");
-        lunchArea.setText("");
-        dinnerArea.setText("");
-        totalCalories = 0;
-        
-        //
-        if (foodDataForDate != null) {
-            for (String food : foodDataForDate.getBreakfastMeals()) {
-                breakfastArea.append(food + "\n");
-            }
-            for (String food : foodDataForDate.getLunchMeals()) {
-                lunchArea.append(food + "\n");
-            }
-            for (String food : foodDataForDate.getDinnerMeals()) {
-                dinnerArea.append(food + "\n");
-            }
-
-            totalCalories = (int) foodDataForDate.getTotalCalories();
-        }
-        totalCaloriesLabel.setText("Total Calories: " + totalCalories + " kcal");
-    }
-
-    // 날짜에 해당하는 FoodDataForDate 객체 찾기임
-    private FoodDataForDate findFoodDataForDate(String date) {
-        for (FoodDataForDate data : foodDataList) {
-            if (data.getDate().equals(date)) {
-                return data;
-            }
-        }
-        // 해당 날짜의 데이터가 없으면 새로 생성함
-        FoodDataForDate newData = new FoodDataForDate(date);
-        foodDataList.add(newData);
-        return newData;
-    }
-    
     //음식 추가하기 버튼을 눌렀을시 이 데이터가 유저 테이블에서도 INSERT되도록 하는 메소드임
     private void addFoodToUserDiet(String userId, int foodId, String date, String timeCategory, int count, double totalCalories) {
         String query = "INSERT INTO Userdiet (Userid, Foodid, Date, Timecategory, Count, TotalCalories) VALUES (?, ?, ?, ?, ?, ?)";
@@ -271,25 +226,20 @@ class DietPanel extends JPanel {
                     totalCaloriesLabel.setText("Total Calories: " + totalCalories + " kcal");
 
                     String currentDate = getCurrentDateString();
-                    FoodDataForDate foodDataForDate = findFoodDataForDate(currentDate);
 
                     if (breakfastCheck.isSelected()) {
-                        foodDataForDate.addMeal("breakfast", foodName);
                         breakfastArea.append(foodName + "\n");
                         addFoodToUserDiet(loginedid, foodId, currentDate, "아침", 1, Double.parseDouble(foodKcal));// 칼로리 값을 double이므로 parse더블을 통해 변경
                     }
                     if (lunchCheck.isSelected()) {
-                        foodDataForDate.addMeal("lunch", foodName);
                         lunchArea.append(foodName + "\n");
                         addFoodToUserDiet(loginedid, foodId, currentDate, "점심", 1, Double.parseDouble(foodKcal));
                     }
                     if (dinnerCheck.isSelected()) {
-                        foodDataForDate.addMeal("dinner", foodName);
                         dinnerArea.append(foodName + "\n");
                         addFoodToUserDiet(loginedid, foodId, currentDate, "저녁", 1, Double.parseDouble(foodKcal));
                     }
 
-                    foodDataForDate.incrementTotalCalories(Double.parseDouble(foodKcal));
                 } else {
                     JOptionPane.showMessageDialog(null, "음식 종류를 선택해 주세요.");
                 }
