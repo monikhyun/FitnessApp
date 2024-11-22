@@ -2,6 +2,8 @@ package com.example;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.List;
+import java.util.List.*;
 import java.awt.event.*;
 import java.util.Calendar;
 import java.sql.*;
@@ -17,6 +19,10 @@ public class RecordPanel extends JPanel implements ActionListener {
     private JButton[] execbtn;
     private JPanel bottompanel = new JPanel();
     private JPanel panel = new JPanel(new BorderLayout());
+    private JButton[][][] execbuttons = new JButton[5][366][];
+    private JPanel[][][] execPanels = new JPanel[5][366][];
+
+
 
     private static final String dburl = "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp";
     private static final String dbusr = "mih";
@@ -35,7 +41,11 @@ public class RecordPanel extends JPanel implements ActionListener {
         ExecGrid = SearchDailyExec();
         add(ExecGrid);
 
-        RecordGrid = ExecRecordPanel();
+        RecordGrid = new JPanel(new BorderLayout());
+        JLabel placeholderLabel = new JLabel("기록하실 운동을 선택해주세요.");
+        placeholderLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        placeholderLabel.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
+        RecordGrid.add(placeholderLabel, BorderLayout.NORTH);
         add(RecordGrid);
     }
 
@@ -78,7 +88,7 @@ public class RecordPanel extends JPanel implements ActionListener {
 
         panel.add(headerPanel, BorderLayout.NORTH);
 
-        panel.add(bottompanel,BorderLayout.SOUTH);
+        panel.add(bottompanel,BorderLayout.CENTER);
 
         return panel;
     }
@@ -86,51 +96,91 @@ public class RecordPanel extends JPanel implements ActionListener {
     // 날짜 라벨 업데이트 메서드
     private void updateDateLabel() {
         int year = currentCalendar.get(Calendar.YEAR);
-        int month = currentCalendar.get(Calendar.MONTH) + 1; // 월은 0부터 시작하므로 +1 필요
+        int month = currentCalendar.get(Calendar.MONTH) + 1;
         int day = currentCalendar.get(Calendar.DAY_OF_MONTH);
 
+        resetRecordGrid();
         dateLabel.setText(year + "-" + month + "-" + day);
-        try{
-            Connection conn;
-            conn = DriverManager.getConnection(dburl, dbusr, dbpass);
-            String sql = "SELECT Execid,Execname FROM UserExec WHERE Userid=? AND Date = ?";
-            PreparedStatement ps1 = conn.prepareStatement(sql);
-            ps1.setString(1, loginedid);
-            ps1.setString(2, dateLabel.getText());
-            ResultSet rs1 = ps1.executeQuery();
-
-            int count = 0;
-            while(rs1.next()){
-                count++;
-            }
-
-            execbtn = new JButton[count];
-            bottompanel.setLayout(new GridLayout(count, 1));
-
-            PreparedStatement ps2 = conn.prepareStatement(sql);
-            ps2.setString(1, loginedid);
-            ps2.setString(2, dateLabel.getText());
-            ResultSet rs2 = ps2.executeQuery();
-            int i=0;
+        int yearIndex = yearToIndex(year);
+        int dayIndex = dateToIndex(year, month, day);
+        if (execbuttons[yearIndex][dayIndex] != null){
+            execbtn = execbuttons[yearIndex][dayIndex];
+            bottompanel.setLayout(new GridLayout(execbtn.length, 1));
             bottompanel.removeAll();
-            while(rs2.next()) {
-                execbtn[i]=new JButton();
-                execbtn[i].setText(rs2.getString("Execname"));
-                bottompanel.add(execbtn[i]);
-                i++;
+            for (JButton button : execbtn) {
+                bottompanel.add(button);
             }
-            bottompanel.validate();
-
-            rs1.close();
-            rs2.close();
-            ps1.close();
-            ps2.close();
-            conn.close();
-        }catch (SQLException e){
-            e.printStackTrace();
+            bottompanel.revalidate();
+            bottompanel.repaint();
         }
+        else{
+            try {
+                Connection conn;
+                conn = DriverManager.getConnection(dburl, dbusr, dbpass);
+                String sql = "SELECT Execid,Execname FROM UserExec WHERE Userid=? AND Date = ?";
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ps.setString(1, loginedid);
+                ps.setString(2, dateLabel.getText());
+                ResultSet rs = ps.executeQuery();
 
+
+                java.util.List<JButton> buttons = new java.util.ArrayList<>();
+                java.util.List<JPanel> panels = new java.util.ArrayList<>();
+                bottompanel.removeAll();
+
+                while (rs.next()) {
+                    JButton button = new JButton(rs.getString("Execname"));
+                    buttons.add(button);
+                    bottompanel.add(button);
+
+                    JPanel panel = new JPanel(new BorderLayout());
+                    JLabel execlabel =new JLabel(button.getText());
+                    execlabel.setFont(new Font("Malgun Gothic", Font.BOLD, 24));
+                    execlabel.setHorizontalAlignment(SwingConstants.CENTER);
+                    panel.add(execlabel, BorderLayout.NORTH);
+                    panel.add(execdetails(), BorderLayout.CENTER);
+                    panels.add(panel);
+
+                    button.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            // 패널 표시
+                            ExecRecordPanel(panel);
+                        }
+                    });
+                }
+
+                execbtn = buttons.toArray(new JButton[0]);
+                execbuttons[yearIndex][dayIndex] = execbtn;
+
+                JPanel[] panelArray = panels.toArray(new JPanel[0]);
+                execPanels[yearIndex][dayIndex] = panelArray;
+
+                bottompanel.setLayout(new GridLayout(execbtn.length, 1));
+                bottompanel.revalidate();
+                bottompanel.repaint();
+
+                rs.close();
+                ps.close();
+                conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
+
+
+
+    private int yearToIndex(int year) {
+        return year - 2024; // 기준 연도를 2024로 설정
+    }
+
+    private int dateToIndex(int year, int month, int day) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(year, month - 1, day); // month는 0부터 시작
+        return cal.get(Calendar.DAY_OF_YEAR) - 1; // 0-based index
+    }
+
 
     // 날짜 선택 팝업창 생성 메서드
     private JDialog createDatePickerDialog() {
@@ -143,7 +193,7 @@ public class RecordPanel extends JPanel implements ActionListener {
         JPanel datePanel = new JPanel();
 
         JComboBox<Integer> yearCombo = new JComboBox<>();
-        for (int year = 2000; year <= 2030; year++) {
+        for (int year = 2024; year <= 2030; year++) {
             yearCombo.addItem(year);
         }
 
@@ -193,14 +243,52 @@ public class RecordPanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == prevDay) {
             currentCalendar.add(Calendar.DAY_OF_MONTH, -1);
+            updateDateLabel();
         } else if (e.getSource() == nextDay) {
             currentCalendar.add(Calendar.DAY_OF_MONTH, 1);
+            updateDateLabel();
         }
-        updateDateLabel();
     }
 
-    private JPanel ExecRecordPanel() {
-        return new JPanel(); // 구현 내용 추가 필요
+    private void ExecRecordPanel(JPanel jpanel) {
+        RecordGrid.removeAll();
+        RecordGrid.add(jpanel, BorderLayout.CENTER);
+        RecordGrid.revalidate();
+        RecordGrid.repaint();
+    }
+
+    private void resetRecordGrid() {
+
+        if (RecordGrid == null) {
+            RecordGrid = new JPanel(new BorderLayout());
+        }
+        RecordGrid.removeAll();
+
+        JLabel placeholderLabel = new JLabel("기록하실 운동을 선택해주세요.");
+        placeholderLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        placeholderLabel.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
+        RecordGrid.add(placeholderLabel, BorderLayout.NORTH);
+
+        RecordGrid.revalidate();
+        RecordGrid.repaint();
+    }
+
+    private JPanel execdetails(){
+        JPanel execdetail = new JPanel(new BorderLayout());
+        execdetail.setBackground(Color.WHITE);
+        JPanel execimgpanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 50));
+        execimgpanel.setPreferredSize(new Dimension(300, 300));
+        execimgpanel.setBackground(Color.RED);
+        execimgpanel.setVisible(true);
+        JPanel execimg = new JPanel();
+        execimg.setPreferredSize(new Dimension(200, 200));
+        execimg.setBackground(Color.GREEN);
+        execimgpanel.add(execimg, BorderLayout.CENTER);
+        execdetail.add(execimgpanel, BorderLayout.NORTH);
+
+
+
+        return execdetail;
     }
 }
 
