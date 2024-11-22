@@ -25,6 +25,7 @@ public class FitnessApp extends JFrame {
         add(tabbedPane, BorderLayout.CENTER);
     }
 
+
     // 각 화면에 표시될 패널 생성 (여기서는 단순히 라벨로 예시)
     private JPanel createPanel(String text) {
         JPanel panel = new JPanel();
