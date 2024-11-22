@@ -32,12 +32,11 @@ public class RecordPanel extends JPanel implements ActionListener {
         this.loginedid = id;
         this.loginedpass = passwd;
 
-        setLayout(new GridLayout(1, 2));
+        setLayout(new GridLayout(1, 2,20,0));
 
         selectedYear = Calendar.getInstance().get(Calendar.YEAR);
         selectedMonth = Calendar.getInstance().get(Calendar.MONTH) + 1;
         selectedDay = Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
-
         ExecGrid = SearchDailyExec();
         add(ExecGrid);
 
@@ -55,13 +54,15 @@ public class RecordPanel extends JPanel implements ActionListener {
         nextDay = new JButton("▶");
         dateLabel = new JLabel("");
         dateLabel.setHorizontalAlignment(JLabel.CENTER);
-        dateLabel.setPreferredSize(new Dimension(150, 30));
+        dateLabel.setPreferredSize(new Dimension(150, 50));
 
         currentCalendar = Calendar.getInstance();
         updateDateLabel();
 
         prevDay.addActionListener(this);
         nextDay.addActionListener(this);
+
+        dateLabel.setFont(new Font("Malgun Gothic", Font.BOLD, 20));
 
         dateLabel.addMouseListener(new MouseListener() {
 
@@ -135,7 +136,7 @@ public class RecordPanel extends JPanel implements ActionListener {
 
                     JPanel panel = new JPanel(new BorderLayout());
                     JLabel execlabel =new JLabel(button.getText());
-                    execlabel.setFont(new Font("Malgun Gothic", Font.BOLD, 24));
+                    execlabel.setFont(new Font("Malgun Gothic", Font.BOLD, 38));
                     execlabel.setHorizontalAlignment(SwingConstants.CENTER);
                     panel.add(execlabel, BorderLayout.NORTH);
                     panel.add(execdetails(), BorderLayout.CENTER);
@@ -274,21 +275,75 @@ public class RecordPanel extends JPanel implements ActionListener {
     }
 
     private JPanel execdetails(){
-        JPanel execdetail = new JPanel(new BorderLayout());
+        JPanel execdetail = new JPanel();
+        execdetail.setLayout(null);
         execdetail.setBackground(Color.WHITE);
-        JPanel execimgpanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 50));
-        execimgpanel.setPreferredSize(new Dimension(300, 300));
+
+        JButton okbtn = new JButton("확인");
+        okbtn.setBackground(Color.white);
+        okbtn.setBounds(620,30,70,50);
+
+        execdetail.add(okbtn);
+
+        JPanel execimgpanel = new JPanel();
+        execimgpanel.setBounds(220, 100,300,300);
         execimgpanel.setBackground(Color.RED);
         execimgpanel.setVisible(true);
-        JPanel execimg = new JPanel();
-        execimg.setPreferredSize(new Dimension(200, 200));
-        execimg.setBackground(Color.GREEN);
-        execimgpanel.add(execimg, BorderLayout.CENTER);
-        execdetail.add(execimgpanel, BorderLayout.NORTH);
+
+
+        execdetail.add(execimgpanel);
+
+        JPanel recordexec = new JPanel();
+        recordexec.setBackground(Color.GREEN);
+        recordexec.setBounds(100,500,600,100);
+        recordexec.setLayout(null);
+
+        JLabel setinput = new JLabel("Set");
+        setinput.setBounds(130,30,50,50);
+
+        JTextField set = new JTextField();
+        set.setBounds(70,30,50,50);
+        set.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JLabel kginput = new JLabel("Kg");
+        kginput.setBounds(260,30,50,50);
+
+        JTextField kg = new JTextField();
+        kg.setBounds(200,30,50,50);
+        kg.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JLabel cntinput = new JLabel("회");
+        cntinput.setBounds(380,30,50,50);
+
+        JTextField cnt = new JTextField();
+        cnt.setBounds(320,30,50,50);
+        cnt.setHorizontalAlignment(SwingConstants.CENTER);
+
+        JButton pluspanel = new JButton("+");
+        pluspanel.setBounds(480,30,50,50);
+        pluspanel.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
+
+        recordexec.add(set);
+        recordexec.add(setinput);
+        recordexec.add(kg);
+        recordexec.add(kginput);
+        recordexec.add(cnt);
+        recordexec.add(cntinput);
+        recordexec.add(pluspanel);
+
+        pluspanel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
+        execdetail.add(recordexec);
 
 
 
         return execdetail;
     }
+
+
 }
 
