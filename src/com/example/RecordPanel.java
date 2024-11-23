@@ -21,6 +21,7 @@ public class RecordPanel extends JPanel implements ActionListener {
     private JPanel panel = new JPanel(new BorderLayout());
     private JButton[][][] execbuttons = new JButton[5][366][];
     private JPanel[][][] execPanels = new JPanel[5][366][];
+    private java.util.List<String> execlist = new java.util.ArrayList<>();
 
 
 
@@ -46,6 +47,23 @@ public class RecordPanel extends JPanel implements ActionListener {
         placeholderLabel.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
         RecordGrid.add(placeholderLabel, BorderLayout.NORTH);
         add(RecordGrid);
+
+        try {
+            Connection conn;
+            conn = DriverManager.getConnection(dburl, dbusr, dbpass);
+            String execid = "SELECT Execname FROM Exec";
+            PreparedStatement ps2 = conn.prepareStatement(execid);
+            ResultSet rs = ps2.executeQuery();
+
+            while(rs.next()){
+                execlist.add(rs.getString("Execname"));
+            }
+
+        }
+
+        catch(SQLException e){
+            e.printStackTrace();
+        }
     }
 
     private JPanel SearchDailyExec() {
@@ -139,14 +157,17 @@ public class RecordPanel extends JPanel implements ActionListener {
                     execlabel.setFont(new Font("Malgun Gothic", Font.BOLD, 38));
                     execlabel.setHorizontalAlignment(SwingConstants.CENTER);
                     panel.add(execlabel, BorderLayout.NORTH);
-                    panel.add(execdetails(), BorderLayout.CENTER);
+                    JScrollPane rcpanel =execdetails(execlabel.getText());
+                    panel.add(rcpanel, BorderLayout.CENTER);
                     panels.add(panel);
 
                     button.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             // 패널 표시
-                            ExecRecordPanel(panel);
+                            JButton evenbtn = (JButton) e.getSource();
+                            String execname = evenbtn.getText();
+                            ExecRecordPanel(panel,execname,rcpanel);
                         }
                     });
                 }
@@ -251,12 +272,21 @@ public class RecordPanel extends JPanel implements ActionListener {
         }
     }
 
-    private void ExecRecordPanel(JPanel jpanel) {
+    private void ExecRecordPanel(JPanel jpanel, String execname, JScrollPane jsp) {
         RecordGrid.removeAll();
+
+        java.util.List<JPanel> recordexecList = new java.util.ArrayList<>(); // 새로운 recordexec 리스트 생성
+        loadRecordExecs(execname, jpanel, recordexecList, jsp);
         RecordGrid.add(jpanel, BorderLayout.CENTER);
         RecordGrid.revalidate();
         RecordGrid.repaint();
     }
+
+    private String getExecNameFromPanel(JPanel jpanel) {
+        JLabel label = (JLabel) jpanel.getComponent(0);
+        return label.getText();
+    }
+
 
     private void resetRecordGrid() {
 
@@ -274,10 +304,12 @@ public class RecordPanel extends JPanel implements ActionListener {
         RecordGrid.repaint();
     }
 
-    private JPanel execdetails(){
+    private JScrollPane execdetails(String execname){
         JPanel execdetail = new JPanel();
         execdetail.setLayout(null);
         execdetail.setBackground(Color.WHITE);
+        execdetail.setPreferredSize(new Dimension(800, 1000)); // 초기 크기 설정
+
 
         JButton okbtn = new JButton("확인");
         okbtn.setBackground(Color.white);
@@ -293,34 +325,107 @@ public class RecordPanel extends JPanel implements ActionListener {
 
         execdetail.add(execimgpanel);
 
+        java.util.List<JPanel> recordexecList = new java.util.ArrayList<>();
+        JPanel recordexec = createRecordExecPanel(0);
+        recordexecList.add(recordexec);
+        execdetail.add(recordexec);
+
+
+        JButton pluspanel = (JButton) recordexec.getComponent(6);
+
+        pluspanel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int index = recordexecList.size();
+                JPanel newRecordExec = createRecordExecPanel(index);
+                recordexecList.add(newRecordExec);
+                execdetail.add(newRecordExec);
+
+                try (Connection conn = DriverManager.getConnection(dburl, dbusr, dbpass)) {
+                    String sql = "INSERT INTO UserExec (Userid, Execid,Execname, Date, Duration) VALUES (?, ?, ?, ?, ?)";
+                    PreparedStatement ps = conn.prepareStatement(sql);
+                    ps.setString(1, loginedid);
+                    int i  = execlist.indexOf(execname);
+                    ps.setInt(2, i);
+                    ps.setString(3, execname); // 예제 운동 이
+                    ps.setDate(4, java.sql.Date.valueOf(dateLabel.getText())); // 현재 날짜
+                    ps.setInt(5, index + 1); // 순서 저장
+                    ps.executeUpdate();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+
+                execdetail.setPreferredSize(new Dimension(800, 500 + recordexecList.size() * 120));
+                execdetail.revalidate();
+                execdetail.repaint();
+            }
+        });
+        JScrollPane scrollPane = new JScrollPane(execdetail);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+
+        okbtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try (Connection conn = DriverManager.getConnection(dburl, dbusr, dbpass)) {
+                    for (int i = 0; i < recordexecList.size(); i++) {
+                        JPanel recordexec = recordexecList.get(i);
+
+                        // JTextField 값 가져오기
+                        int set = Integer.parseInt(((JTextField) recordexec.getComponent(0)).getText());
+                        int kg = Integer.parseInt(((JTextField) recordexec.getComponent(2)).getText());
+                        int count = Integer.parseInt(((JTextField) recordexec.getComponent(4)).getText());
+
+                        // 데이터 업데이트
+                        String sql = "UPDATE UserExec SET Kg = ?, Count = ? , Complete = ? WHERE Userid = ? AND Date = ? AND Duration = ?";
+                        PreparedStatement ps = conn.prepareStatement(sql);
+                        ps.setInt(1, kg);
+                        ps.setInt(2, count);
+                        ps.setInt(3,1);
+                        ps.setString(4, loginedid);
+                        ps.setDate(5, java.sql.Date.valueOf(dateLabel.getText())); // 현재 날짜
+                        ps.setInt(6, i + 1); // 순서 저장
+                        ps.executeUpdate();
+                    }
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+
+            }
+        });
+
+        return scrollPane;
+    }
+
+    public static JPanel createRecordExecPanel(int index) {
         JPanel recordexec = new JPanel();
-        recordexec.setBackground(Color.GREEN);
-        recordexec.setBounds(100,500,600,100);
+        recordexec.setBackground(Color.GRAY);
+        recordexec.setBounds(80, 500 + index * 120, 600, 100);
         recordexec.setLayout(null);
 
         JLabel setinput = new JLabel("Set");
-        setinput.setBounds(130,30,50,50);
+        setinput.setBounds(130, 30, 50, 50);
 
         JTextField set = new JTextField();
-        set.setBounds(70,30,50,50);
+        set.setBounds(70, 30, 50, 50);
         set.setHorizontalAlignment(SwingConstants.CENTER);
 
         JLabel kginput = new JLabel("Kg");
-        kginput.setBounds(260,30,50,50);
+        kginput.setBounds(260, 30, 50, 50);
 
         JTextField kg = new JTextField();
-        kg.setBounds(200,30,50,50);
+        kg.setBounds(200, 30, 50, 50);
         kg.setHorizontalAlignment(SwingConstants.CENTER);
 
         JLabel cntinput = new JLabel("회");
-        cntinput.setBounds(380,30,50,50);
+        cntinput.setBounds(380, 30, 50, 50);
 
         JTextField cnt = new JTextField();
-        cnt.setBounds(320,30,50,50);
+        cnt.setBounds(320, 30, 50, 50);
         cnt.setHorizontalAlignment(SwingConstants.CENTER);
 
         JButton pluspanel = new JButton("+");
-        pluspanel.setBounds(480,30,50,50);
+        pluspanel.setBounds(480, 30, 50, 50);
         pluspanel.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
 
         recordexec.add(set);
@@ -331,18 +436,45 @@ public class RecordPanel extends JPanel implements ActionListener {
         recordexec.add(cntinput);
         recordexec.add(pluspanel);
 
-        pluspanel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-            }
-        });
-        execdetail.add(recordexec);
-
-
-
-        return execdetail;
+        return recordexec;
     }
+
+    private void loadRecordExecs(String execname, JPanel jpanel, java.util.List<JPanel> recordexecList, JScrollPane jsp) {
+        try (Connection conn = DriverManager.getConnection(dburl, dbusr, dbpass)) {
+            String sql = "SELECT Duration, Execname, Kg, Count " +
+                    "FROM UserExec WHERE Userid = ? AND Date = ? AND Execname = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, loginedid);  // 로그인 ID
+            ps.setDate(2, java.sql.Date.valueOf(dateLabel.getText()));  // 선택 날짜
+            ps.setString(3, execname);  // 운동 이름
+            ResultSet rs = ps.executeQuery();
+
+
+            recordexecList.clear(); // 기존 리스트 초기화
+
+            while (rs.next()) {
+                int setcount = rs.getInt("Duration");
+                int kgValue = rs.getInt("Kg");
+                int count = rs.getInt("Count");
+
+                // recordexec 패널 생성 및 복원
+                JPanel recordexec = createRecordExecPanel(setcount - 1);
+                recordexecList.add(recordexec); // 리스트에 추가
+                jsp.add(recordexec); // 패널에 추가
+
+                // JTextField 값 복원
+                ((JTextField) recordexec.getComponent(0)).setText(String.valueOf(setcount)); // Set
+                ((JTextField) recordexec.getComponent(2)).setText(String.valueOf(kgValue)); // Kg
+                ((JTextField) recordexec.getComponent(4)).setText(String.valueOf(count));  // 회
+            }
+
+            jsp.revalidate();
+            jsp.repaint();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
 
 
 }
