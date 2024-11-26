@@ -1,26 +1,23 @@
-package com.example;
-import javax.swing.*;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
+package JavaProjects;
+
+import java.util.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import javax.swing.*;
+import javax.swing.event.*;
+import java.awt.event.*;
+import java.sql.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
 
 class Login extends JFrame implements ActionListener{
     JTextField id;
-    JPasswordField passwd;
+    JPasswordField passwd;  
     JButton b1;
     JButton b2;
     JButton b3;
     JButton b4;
     JButton b5;
-
     Login(String title){
         setTitle(title);
         Container ct = getContentPane();
@@ -31,7 +28,6 @@ class Login extends JFrame implements ActionListener{
         id.setBounds(170, 60, 120, 30);
         ct.add(l1);
         ct.add(id);
-
         JLabel l2 = new JLabel("PASSWD");
         passwd = new JPasswordField(8);
         l2.setBounds(80, 100, 70, 30);
@@ -44,8 +40,6 @@ class Login extends JFrame implements ActionListener{
         b3 = new JButton("회원가입");
         b4 = new JButton("아이디 찾기");
         b5 = new JButton("비밀번호 찾기");
-
-        passwd.addActionListener(this);
         b1.addActionListener(this);
         b2.addActionListener(this);
         b3.addActionListener(this);
@@ -65,20 +59,7 @@ class Login extends JFrame implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         String s = e.getActionCommand();
-        if(s.equals("로그인")||e.getSource()==passwd) {
-            String userId = id.getText().trim();
-            String password = new String(passwd.getPassword());
-
-            if (checklogin(userId, password)) {
-                FitnessApp app = new FitnessApp(userId,password);
-                app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                app.setSize(1500, 1024);
-                app.setLocationRelativeTo(null);
-                app.setVisible(true);
-                this.dispose();
-            }
-        }
-        else if(s.equals("취소")) {
+        if(s.equals("취소")) {
             id.setText("");
             passwd.setText("");
         }
@@ -87,9 +68,8 @@ class Login extends JFrame implements ActionListener{
             my.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             my.setSize(520,500);
             my.setLocation(400,300);
-            my.setVisible(true);
+            my.show();
         }
-
         else if (s.equals("아이디 찾기")) {
             FindID findID = new FindID("아이디 찾기");
             findID.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -100,34 +80,7 @@ class Login extends JFrame implements ActionListener{
             findPassword.setVisible(true);
         }
     }
-
-    private boolean checklogin(String userid, String password) {
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123")) {
-
-            String sql = "SELECT * FROM User WHERE Userid = ? AND Password = ?";
-            PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, userid);
-            pstmt.setString(2, password);
-
-            ResultSet rs = pstmt.executeQuery();
-            boolean result = rs.next();
-            return result;
-
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(null,
-                    "데이터베이스 연결 오류가 발생했습니다.",
-                    "오류",
-                    JOptionPane.ERROR_MESSAGE);
-            return false;
-        }
-    }
 }
-
-
-
-
-
 
 class NewMember extends JFrame implements ActionListener{
     JTextField id;
@@ -149,7 +102,7 @@ class NewMember extends JFrame implements ActionListener{
     private ButtonGroup goalGroup;
     private JComboBox<String> comboBox;
     private boolean idChecked = false;
-
+    private boolean allFieldsValid = false;
     NewMember(String title){
         setTitle(title);
         Container ct = getContentPane();
@@ -157,9 +110,11 @@ class NewMember extends JFrame implements ActionListener{
 
         JPanel top = new JPanel();
         top.setLayout(new GridLayout(10,1));
+
         JPanel p1 = new JPanel();
         p1.setLayout(new FlowLayout(FlowLayout.LEFT));
-        JLabel l1 = new JLabel("ID	        :");
+
+        JLabel l1 = new JLabel("ID		:");
         id = new JTextField(10);
         check = new JButton("중복 체크");
         check.addActionListener(this);
@@ -271,7 +226,6 @@ class NewMember extends JFrame implements ActionListener{
 
     public void actionPerformed(ActionEvent e) {
         String s = e.getActionCommand();
-
         if(s.equals("취소")) {
             id.setText("");
             passwd.setText("");
@@ -446,7 +400,6 @@ class NewMember extends JFrame implements ActionListener{
     }
 }
 
-
 // 아이디 찾기 클래스
 class FindID extends JFrame implements ActionListener {
     JTextField nameField, answerField; // 이름과 힌트 답변 입력 필드
@@ -472,9 +425,9 @@ class FindID extends JFrame implements ActionListener {
         hintPanel.add(hintLabel);
         hintPanel.add(comboBox);
 
-        // 힌트 답변 입력 패널 구성asdasdasdasda
+        // 힌트 답변 입력 패널 구성
         JPanel answerPanel = new JPanel();
-        JLabel answerLabel = new JLabel("힌트 답: ");
+        JLabel answerLabel = new JLabel("힌트 답:");
         answerField = new JTextField(15);
         answerPanel.add(answerLabel);
         answerPanel.add(answerField);
@@ -679,7 +632,6 @@ class FindPassword extends JFrame implements ActionListener {
 }
 
 
-
 class MessageDialog extends JDialog implements ActionListener{
     JButton ok;
     MessageDialog(JFrame parent, String title, boolean mode, String msg)
@@ -701,15 +653,13 @@ class MessageDialog extends JDialog implements ActionListener{
     }
 
 }
-public class Main {
+public class MyLogin {
     public static void main(String[] args) {
         Login win = new Login("로그인");
         win.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         win.setSize(350, 300);
         win.setLocation(100, 200);
-        win.setVisible(true);
+        win.show();
     }
 
-
 }
-

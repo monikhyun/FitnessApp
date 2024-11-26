@@ -1,14 +1,16 @@
-package com.example;
+package JavaProject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionListener;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Vector;
 
 import static java.awt.Font.PLAIN;
 
-class CalendarPanel extends JPanel {
+class CalendarPanel extends JPanel{
     private JLabel yearMonthLabel;
     private JPanel calendarGrid;
     private Calendar currentCalendar;
@@ -45,7 +47,7 @@ class CalendarPanel extends JPanel {
         updateCalendar(); // 초기 캘린더 표시
     }
 
-    private JPanel createCalendarSection() {
+    private JPanel createCalendarSection() {  // 화면상 완쪽
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(BorderFactory.createTitledBorder("운동 캘린더"));
 
@@ -165,19 +167,24 @@ class CalendarPanel extends JPanel {
         calendarGrid.repaint();
     }
 
-    private JPanel createInfoPanel() {
+    private JPanel createInfoPanel() { // 화면상 오른쪽
         JPanel infoPanel = new JPanel();
         infoPanel.setBorder(BorderFactory.createTitledBorder("운동 정보"));
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.Y_AXIS));
         Calendar today = Calendar.getInstance();
         // 오늘의 운동 요약
         JPanel summaryPanel = new JPanel(new BorderLayout());
+        JPanel resetPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         summaryPanel.setBorder(BorderFactory.createTitledBorder("오늘의 운동"));
+        JButton reset = new JButton("초기화");
         summaryArea = new JTextArea(5, 20);
         summaryArea.setEditable(false);
         updateSummaryPanel(today.get(Calendar.DAY_OF_MONTH), today.get(Calendar.MONTH) + 1);
         summaryPanel.add(new JScrollPane(summaryArea));
+        summaryPanel.add(resetPanel, BorderLayout.EAST);
+        resetPanel.add(reset);
         infoPanel.add(summaryPanel);
+
 
         // 운동 추가 패널
         JPanel addexec = new JPanel(new BorderLayout());
@@ -191,27 +198,26 @@ class CalendarPanel extends JPanel {
 
         Connection conn;
 
+        reset.addActionListener(e -> resetData());
+
         try {
             conn = DriverManager.getConnection(dburl, dbusr, dbpass);
             String sql = "SELECT Execid,Execname,Category FROM Exec";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
 
-            JPanel buttonPanel = new JPanel();
-            buttonPanel.setLayout(new GridLayout(0, 4, 10, 10)); // 4열로 배치
+            JPanel buttonPanel = new JPanel(new GridLayout(9,4,10,10));
 
-            ArrayList<JButton> exercises = new ArrayList<>();
+            Vector<JButton> exercises = new Vector<>();
             while (rs.next()) {
                 int execid = rs.getInt("Execid");
                 String exerciseName = rs.getString("Execname");
                 String category = rs.getString("Category");
                 // 버튼 텍스트는 운동 이름과 카테고리를 함께 표시
                 JButton exerciseButton = new JButton(exerciseName + " (" + category + ")");
-                exerciseButton.setPreferredSize(new Dimension(40, 30));
-                exerciseButton.setMaximumSize(new Dimension(40, 30));  // 최대 크기 설정
-                exerciseButton.setMinimumSize(new Dimension(40, 30));
                 // 버튼에 카테고리 정보도 저장
                 exerciseButton.putClientProperty("category", category);
+                exerciseButton.setPreferredSize(new Dimension(150, 40));
                 // 나중에 카테고리 정보가 필요할 때:
                 // String buttonCategory = (String) exerciseButton.getClientProperty("category");;
                 exerciseButton.addActionListener(e -> {
@@ -221,12 +227,12 @@ class CalendarPanel extends JPanel {
                 exercises.add(exerciseButton);
                 buttonPanel.add(exerciseButton);
             }
-            exercateBox.addActionListener(e -> {
+            exercateBox.addActionListener(e -> { //카테고리 별 버튼 나누기
                 String selectedCategory = (String) exercateBox.getSelectedItem();
                 buttonPanel.removeAll();
-                for(JButton button : exercises) {
-                    String buttoncate= (String) button.getClientProperty("category");
-                    if("All".equals(selectedCategory) || buttoncate.equals(selectedCategory)) {
+                for (JButton button : exercises) {
+                    String buttoncate = (String) button.getClientProperty("category");
+                    if ("All".equals(selectedCategory) || buttoncate.equals(selectedCategory)) {
                         buttonPanel.add(button);
                     }
                 }
@@ -247,15 +253,23 @@ class CalendarPanel extends JPanel {
         return infoPanel;
     }
 
-
+    // 데이터베이스에 값 저장하기
     private void addExercise(int execid, String execname) {
         try (Connection conn = DriverManager.getConnection(dburl, dbusr, dbpass)) {
+            String UserExecStr = String.format("%d-%02d-%02d", selectedYear, selectedMonth, selectedDay);
+            Date sqlDate = Date.valueOf(UserExecStr);
+
+            String checkDateSql = "INSERT INTO Calendar (Date) VALUES (?)";
+            try (PreparedStatement psCheck = conn.prepareStatement(checkDateSql)) {
+                psCheck.setDate(1, sqlDate);
+                psCheck.executeUpdate();
+            }
+
             // UserExec 테이블에 운동 기록 추가
-            String insertSql = "INSERT INTO UserExec (Userid,Execid,ExecName,Date) VALUES (?, ?, ?, ?)";
-            try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
+            String insertUserExecSql = "INSERT INTO UserExec (Userid,Execid,ExecName,Date) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement ps = conn.prepareStatement(insertUserExecSql)) {
                 // 선택된 날짜를 SQL date 형식으로 변환
-                String dateStr = String.format("%d-%02d-%02d", selectedYear, selectedMonth, selectedDay);
-                Date sqlDate = Date.valueOf(dateStr);
+
 
                 ps.setString(1, loginedid);
                 ps.setInt(2, execid);
@@ -264,11 +278,24 @@ class CalendarPanel extends JPanel {
 
                 ps.executeUpdate();
 
+                // Complete 필드를 포함하여 INSERT
+                String insertUserCalStr = "INSERT INTO User_Calendar (Userid,Execid,Date,Complete) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement psCal = conn.prepareStatement(insertUserCalStr)) {
+                    psCal.setString(1, loginedid);
+                    psCal.setInt(2, execid);
+                    psCal.setDate(3, sqlDate);
+                    psCal.setInt(4, 1);
+
+                    psCal.executeUpdate();
+                }
+
                 // UI 업데이트를 위해 운동 목록에 추가
                 dailyExercises.add(execname);
                 JOptionPane.showMessageDialog(this, "운동이 추가되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
             }
+
         } catch (SQLException e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(this, "운동 추가 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -295,6 +322,47 @@ class CalendarPanel extends JPanel {
             }
         } catch (SQLException e) {
             summaryArea.append("\n운동 기록을 불러오는 중 오류가 발생했습니다.");
+        }
+    }
+
+    private void resetData() {
+        int result = JOptionPane.showConfirmDialog(this,
+                "모든 운동 기록이 삭제됩니다. 정말 초기화하시겠습니까?",
+                "초기화 확인",
+                JOptionPane.YES_NO_OPTION,
+                JOptionPane.WARNING_MESSAGE);
+
+        if (result != JOptionPane.YES_OPTION) {
+            return; // 사용자가 '아니오'를 선택한 경우
+        }
+        try (Connection con = DriverManager.getConnection(dburl, dbusr, dbpass)) {
+            String UserExecStr = String.format("%d-%02d-%02d", selectedYear, selectedMonth, selectedDay);
+            Date sqlDate = Date.valueOf(UserExecStr);
+            String delex = "DELETE FROM UserExec WHERE UserID = ? AND DATE = ?";
+            try {
+                PreparedStatement ps = con.prepareStatement(delex);
+                ps.setString(1, loginedid);
+                ps.setDate(2, sqlDate);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            String delUserCal = "DELETE FROM User_Calendar WHERE UserID = ? AND Date = ?";
+            try {
+                PreparedStatement ps = con.prepareStatement(delUserCal);
+                ps.setString(1, loginedid);
+                ps.setDate(2, sqlDate);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+            dailyExercises.clear();
+        } catch (SQLException e) {
+            e.getStackTrace();
+            JOptionPane.showMessageDialog(this,
+                    "데이터 삭제 중 오류가 발생했습니다: " + e.getMessage(),
+                    "오류",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 }
