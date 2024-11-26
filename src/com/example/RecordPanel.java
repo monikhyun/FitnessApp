@@ -338,6 +338,9 @@ public class RecordPanel extends JPanel implements ActionListener {
             public void actionPerformed(ActionEvent e) {
                 int index = recordexecList.size();
                 JPanel newRecordExec = createRecordExecPanel(index);
+                JButton deletebtn = (JButton) newRecordExec.getComponent(6);
+
+                newRecordExec.remove(deletebtn);
                 recordexecList.add(newRecordExec);
                 execdetail.add(newRecordExec);
 

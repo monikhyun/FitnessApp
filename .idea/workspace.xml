@@ -4,14 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="0ba863dd-d63f-4a92-8c11-7893a3a37210" name="변경" comment="전체 보수">
+    <list default="true" id="0ba863dd-d63f-4a92-8c11-7893a3a37210" name="변경" comment="날짜별 운동버튼 조회가능">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/FitnessApp.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/FitnessApp.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel$NutritionChartPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel$NutritionChartPanel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel$VolumeChartPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel$VolumeChartPanel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel$WorkoutChartPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel$WorkoutChartPanel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/StatsPanel.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/example/FitnessApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/example/FitnessApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/RecordPanel$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/RecordPanel$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/RecordPanel$2.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/RecordPanel$2.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/FitnessApp/com/example/RecordPanel.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/FitnessApp/com/example/RecordPanel.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/com/example/RecordPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/example/RecordPanel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,12 +26,12 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "monikhyun"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;monikhyun&quot;
   }
-}]]></component>
+}</component>
   <component name="GithubProjectSettings">
     <option name="branchProtectionPatterns">
       <list>
@@ -47,29 +45,29 @@
     &quot;accountId&quot;: &quot;e27fb9ad-23f3-4c59-9690-ea514d8e25f6&quot;
   }
 }</component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 0
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="2p9MGEPgFr6tegprPXHdprp8vwB" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "dev",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/mih20/OneDrive/바탕 화면/과제물/FitnessApp/src/com/example",
-    "project.structure.last.edited": "라이브러리",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "애플리케이션.Main.executor": "Run",
-    "애플리케이션.StatsPanel.executor": "Run"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/mih20/OneDrive/바탕 화면/과제물/FitnessApp/src/com/example&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;라이브러리&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;애플리케이션.Main.executor&quot;: &quot;Run&quot;,
+    &quot;애플리케이션.StatsPanel.executor&quot;: &quot;Run&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\mih20\OneDrive\바탕 화면\과제물\FitnessApp\src\com\example" />
@@ -92,11 +90,20 @@
       <option name="presentableId" value="Default" />
       <updated>1732173740839</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="날짜별 운동버튼 조회가능">
+      <option name="closed" value="true" />
+      <created>1732182095541</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1732182095541</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="전체 보수" />
-    <option name="LAST_COMMIT_MESSAGE" value="전체 보수" />
+    <MESSAGE value="날짜별 운동버튼 조회가능" />
+    <option name="LAST_COMMIT_MESSAGE" value="날짜별 운동버튼 조회가능" />
   </component>
 </project>
