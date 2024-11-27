@@ -394,35 +394,36 @@ public class RecordPanel extends JPanel implements ActionListener {
 
     public static JPanel createRecordExecPanel(int index) {
         JPanel recordexec = new JPanel();
-        recordexec.setBackground(Color.GRAY);
-        recordexec.setBounds(80, 500 + index * 120, 600, 100);
+        recordexec.setBounds(80, 450 + index * 80, 600, 70);
         recordexec.setLayout(null);
 
+
         JLabel setinput = new JLabel("Set");
-        setinput.setBounds(130, 30, 50, 50);
+        setinput.setBounds(130, 20, 40, 40);
 
         JTextField set = new JTextField();
-        set.setBounds(70, 30, 50, 50);
+        set.setBounds(70, 20, 40, 40);
         set.setHorizontalAlignment(SwingConstants.CENTER);
 
         JLabel kginput = new JLabel("Kg");
-        kginput.setBounds(260, 30, 50, 50);
+        kginput.setBounds(260, 20, 40, 40);
 
         JTextField kg = new JTextField();
-        kg.setBounds(200, 30, 50, 50);
+        kg.setBounds(200, 20, 40, 40);
         kg.setHorizontalAlignment(SwingConstants.CENTER);
 
         JLabel cntinput = new JLabel("회");
-        cntinput.setBounds(380, 30, 50, 50);
+        cntinput.setBounds(380, 20, 40, 40);
 
         JTextField cnt = new JTextField();
-        cnt.setBounds(320, 30, 50, 50);
+        cnt.setBounds(320, 20, 40, 40);
         cnt.setHorizontalAlignment(SwingConstants.CENTER);
 
         if(index==0) {
             JButton pluspanel = new JButton("+");
-            pluspanel.setBounds(480, 30, 50, 50);
-            pluspanel.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
+            pluspanel.setBounds(480, 20, 40, 40);
+            pluspanel.setFont(new Font("Malgun Gothic", Font.PLAIN, 7));
+
 
             recordexec.add(set);
             recordexec.add(setinput);
