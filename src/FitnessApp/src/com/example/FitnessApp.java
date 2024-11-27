@@ -1,12 +1,10 @@
-package FitnessApp.src.com.example;
+package com.example;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
-import java.sql.*;
-import java.io.*;
 
 public class FitnessApp extends JFrame {
     private CardLayout cardLayout;
