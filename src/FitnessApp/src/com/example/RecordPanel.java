@@ -23,15 +23,13 @@ public class RecordPanel extends JPanel implements ActionListener {
     private JPanel[][][] execPanels = new JPanel[5][366][];
     private java.util.List<String> execlist = new java.util.ArrayList<>();
 
+    Connection conn;
 
 
-    private static final String dburl = "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp";
-    private static final String dbusr = "mih";
-    private static final String dbpass = "ansxoddl123";
-
-    public RecordPanel(String id, String passwd) {
+    public RecordPanel(String id, String passwd, Connection conn) {
         this.loginedid = id;
         this.loginedpass = passwd;
+        this.conn = conn;
 
         setLayout(new GridLayout(1, 2,20,0));
 
@@ -49,8 +47,6 @@ public class RecordPanel extends JPanel implements ActionListener {
         add(RecordGrid);
 
         try {
-            Connection conn;
-            conn = DriverManager.getConnection(dburl, dbusr, dbpass);
             String execid = "SELECT Execname FROM Exec";
             PreparedStatement ps2 = conn.prepareStatement(execid);
             ResultSet rs = ps2.executeQuery();
@@ -134,8 +130,6 @@ public class RecordPanel extends JPanel implements ActionListener {
         }
         else{
             try {
-                Connection conn;
-                conn = DriverManager.getConnection(dburl, dbusr, dbpass);
                 String sql = "SELECT Execid,Execname FROM UserExec WHERE Userid=? AND Date = ?";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setString(1, loginedid);
@@ -184,7 +178,6 @@ public class RecordPanel extends JPanel implements ActionListener {
 
                 rs.close();
                 ps.close();
-                conn.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -194,6 +187,7 @@ public class RecordPanel extends JPanel implements ActionListener {
 
 
     private int yearToIndex(int year) {
+
         return year - 2024; // 기준 연도를 2024로 설정
     }
 
@@ -336,15 +330,13 @@ public class RecordPanel extends JPanel implements ActionListener {
         pluspanel.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int index = recordexecList.size();
+                int index = recordexecList.size(); // 자동으로 recordexeclist 다음 인덱스 부여
                 JPanel newRecordExec = createRecordExecPanel(index);
-                JButton deletebtn = (JButton) newRecordExec.getComponent(6);
 
-                newRecordExec.remove(deletebtn);
                 recordexecList.add(newRecordExec);
                 execdetail.add(newRecordExec);
 
-                try (Connection conn = DriverManager.getConnection(dburl, dbusr, dbpass)) {
+                try  {
                     String sql = "INSERT INTO UserExec (Userid, Execid,Execname, Date, Duration) VALUES (?, ?, ?, ?, ?)";
                     PreparedStatement ps = conn.prepareStatement(sql);
                     ps.setString(1, loginedid);
@@ -370,7 +362,7 @@ public class RecordPanel extends JPanel implements ActionListener {
         okbtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                try (Connection conn = DriverManager.getConnection(dburl, dbusr, dbpass)) {
+                try  {
                     for (int i = 0; i < recordexecList.size(); i++) {
                         JPanel recordexec = recordexecList.get(i);
 
@@ -427,23 +419,33 @@ public class RecordPanel extends JPanel implements ActionListener {
         cnt.setBounds(320, 30, 50, 50);
         cnt.setHorizontalAlignment(SwingConstants.CENTER);
 
-        JButton pluspanel = new JButton("+");
-        pluspanel.setBounds(480, 30, 50, 50);
-        pluspanel.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
+        if(index==0) {
+            JButton pluspanel = new JButton("+");
+            pluspanel.setBounds(480, 30, 50, 50);
+            pluspanel.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
 
-        recordexec.add(set);
-        recordexec.add(setinput);
-        recordexec.add(kg);
-        recordexec.add(kginput);
-        recordexec.add(cnt);
-        recordexec.add(cntinput);
-        recordexec.add(pluspanel);
+            recordexec.add(set);
+            recordexec.add(setinput);
+            recordexec.add(kg);
+            recordexec.add(kginput);
+            recordexec.add(cnt);
+            recordexec.add(cntinput);
+            recordexec.add(pluspanel);
+        }
+        else {
+            recordexec.add(set);
+            recordexec.add(setinput);
+            recordexec.add(kg);
+            recordexec.add(kginput);
+            recordexec.add(cnt);
+            recordexec.add(cntinput);
+        }
 
         return recordexec;
     }
 
     private void loadRecordExecs(String execname, JPanel jpanel, java.util.List<JPanel> recordexecList, JScrollPane jsp) {
-        try (Connection conn = DriverManager.getConnection(dburl, dbusr, dbpass)) {
+        try  {
             String sql = "SELECT Duration, Execname, Kg, Count " +
                     "FROM UserExec WHERE Userid = ? AND Date = ? AND Execname = ?";
             PreparedStatement ps = conn.prepareStatement(sql);

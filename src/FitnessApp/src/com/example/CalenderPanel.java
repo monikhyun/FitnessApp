@@ -23,9 +23,13 @@ class CalendarPanel extends JPanel {
     private static final String dbusr = "mih";
     private static final String dbpass = "ansxoddl123";
 
-    public CalendarPanel(String loginedid, String loginedpass) {
+    Connection conn;
+
+
+    public CalendarPanel(String loginedid, String loginedpass, Connection conn) {
         this.loginedid = loginedid;
         this.loginedpass = loginedpass;
+        this.conn = conn;
 
         setLayout(new GridLayout(1, 2));  // 1행 2열의 그리드 레이아웃
         currentCalendar = Calendar.getInstance(); // 현재 날짜로 초기화
@@ -189,10 +193,10 @@ class CalendarPanel extends JPanel {
         infoPanel.add(addexec);
 
 
-        Connection conn;
+
+
 
         try {
-            conn = DriverManager.getConnection(dburl, dbusr, dbpass);
             String sql = "SELECT Execid,Execname,Category FROM Exec";
             PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();
@@ -239,7 +243,7 @@ class CalendarPanel extends JPanel {
 
             rs.close();
             ps.close();
-            conn.close();
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -249,7 +253,7 @@ class CalendarPanel extends JPanel {
 
 
     private void addExercise(int execid, String execname) {
-        try (Connection conn = DriverManager.getConnection(dburl, dbusr, dbpass)) {
+        try  {
             // UserExec 테이블에 운동 기록 추가
             String insertSql = "INSERT INTO UserExec (Userid,Execid,ExecName,Date) VALUES (?, ?, ?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
@@ -277,7 +281,7 @@ class CalendarPanel extends JPanel {
         summaryArea.setText(String.format("%d월 %d일의 운동 기록:\n", month, day));
 
         // 데이터베이스에서 해당 날짜의 운동 기록을 조회
-        try (Connection conn = DriverManager.getConnection(dburl, dbusr, dbpass)) {
+
             String sql = "SELECT Execname FROM UserExec WHERE UserID = ? AND DATE = ?";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 String dateStr = String.format("%d-%02d-%02d", selectedYear, month, day);
@@ -292,9 +296,10 @@ class CalendarPanel extends JPanel {
                         summaryArea.append("- " + exerciseName + "\n");
                     }
                 }
+
             }
-        } catch (SQLException e) {
-            summaryArea.append("\n운동 기록을 불러오는 중 오류가 발생했습니다.");
-        }
+            catch (SQLException e) {
+                summaryArea.append("\n운동 기록을 불러오는 중 오류가 발생했습니다.");
+            }
     }
 }

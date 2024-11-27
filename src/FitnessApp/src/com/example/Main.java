@@ -1,4 +1,5 @@
 package com.example;
+
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
@@ -20,8 +21,18 @@ class Login extends JFrame implements ActionListener{
     JButton b3;
     JButton b4;
     JButton b5;
+    Connection conn;
+
+    public void DBLogin (){
+        try{
+            conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123");
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
     Login(String title){
+        DBLogin();
         setTitle(title);
         Container ct = getContentPane();
         ct.setLayout(null);
@@ -70,7 +81,7 @@ class Login extends JFrame implements ActionListener{
             String password = new String(passwd.getPassword());
 
             if (checklogin(userId, password)) {
-                FitnessApp app = new FitnessApp(userId,password);
+                FitnessApp app = new FitnessApp(userId,password, conn);
                 app.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                 app.setSize(1500, 1024);
                 app.setLocationRelativeTo(null);
@@ -83,7 +94,7 @@ class Login extends JFrame implements ActionListener{
             passwd.setText("");
         }
         else if(s.equals("회원가입")) {
-            NewMember my = new NewMember("회원가입");
+            NewMember my = new NewMember("회원가입", conn);
             my.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             my.setSize(520,500);
             my.setLocation(400,300);
@@ -91,18 +102,18 @@ class Login extends JFrame implements ActionListener{
         }
 
         else if (s.equals("아이디 찾기")) {
-            FindID findID = new FindID("아이디 찾기");
+            FindID findID = new FindID("아이디 찾기", conn);
             findID.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             findID.setVisible(true);
         } else if (s.equals("비밀번호 찾기")) {
-            FindPassword findPassword = new FindPassword("비밀번호 찾기");
+            FindPassword findPassword = new FindPassword("비밀번호 찾기", conn);
             findPassword.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             findPassword.setVisible(true);
         }
     }
 
     private boolean checklogin(String userid, String password) {
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123")) {
+        try  {
 
             String sql = "SELECT * FROM User WHERE Userid = ? AND Password = ?";
             PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -150,7 +161,9 @@ class NewMember extends JFrame implements ActionListener{
     private JComboBox<String> comboBox;
     private boolean idChecked = false;
 
-    NewMember(String title){
+    Connection conn;
+
+    NewMember(String title, Connection conn){
         setTitle(title);
         Container ct = getContentPane();
         ct.setLayout(new BorderLayout(0, 20));
@@ -293,7 +306,7 @@ class NewMember extends JFrame implements ActionListener{
     }
 
     private void saveUserToDatabase() {
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123")) {
+        try  {
             String sql = "INSERT INTO User (Userid, Password, Username, Weight, Height, Age, Gender, GoalType, Keyqusid) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, id.getText().trim());
@@ -371,9 +384,7 @@ class NewMember extends JFrame implements ActionListener{
     }
 
     private String[] loadKeyQuestionsFromDB() {
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp",
-                "mih", "ansxoddl123")) {
+        try {
 
             String sql = "SELECT KeyQus FROM KeyQus";
             PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -390,7 +401,6 @@ class NewMember extends JFrame implements ActionListener{
 
             rs.close();
             pstmt.close();
-            conn.close();
 
             // 리스트를 배열로 변환하여 반환
             return questions.toArray(new String[0]);
@@ -403,11 +413,7 @@ class NewMember extends JFrame implements ActionListener{
 
     private void Duplicate() {
         try {
-            // 데이터베이스 연결
-            Connection conn = DriverManager.getConnection(
-                    "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp",
-                    "mih",
-                    "ansxoddl123");
+
 
             // SQL 쿼리 준비
             String sql = "SELECT COUNT(*) FROM User WHERE Userid = ?";
@@ -438,7 +444,7 @@ class NewMember extends JFrame implements ActionListener{
             // 자원 닫기
             rs.close();
             pstmt.close();
-            conn.close();
+
         } catch (Exception ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "데이터베이스 연결 실패", "오류", JOptionPane.ERROR_MESSAGE);
@@ -453,7 +459,9 @@ class FindID extends JFrame implements ActionListener {
     JComboBox<String> comboBox; // 힌트 질문 선택 콤보박스
     JButton findButton, cancelButton; // 찾기 및 취소 버튼
 
-    FindID(String title) {
+    Connection conn;
+
+    FindID(String title, Connection conn) {
         setTitle(title);
         Container ct = getContentPane();
         ct.setLayout(new GridLayout(4, 1));
@@ -550,7 +558,7 @@ class FindID extends JFrame implements ActionListener {
 
             rs.close();
             pstmt.close();
-            conn.close();
+
 
             return questions.toArray(new String[0]); // 리스트를 배열로 변환 후 반환
 
@@ -567,8 +575,9 @@ class FindPassword extends JFrame implements ActionListener {
     JComboBox<String> comboBox; // 힌트 질문 선택 콤보박스
     JButton findButton, cancelButton; // 찾기 및 취소 버튼
 
+    Connection conn;
 
-    FindPassword(String title) {
+    FindPassword(String title, Connection conn) {
         setTitle(title);
         Container ct = getContentPane();
         ct.setLayout(new GridLayout(4, 1));
@@ -623,9 +632,7 @@ class FindPassword extends JFrame implements ActionListener {
     }
 
     private void findPassword() {
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp",
-                "mih", "ansxoddl123")) {
+        try  {
 
             // SQL 쿼리 준비
             String sql = "SELECT u.Password FROM User u JOIN Ukey k ON u.Userid = k.Userid WHERE u.Userid = ? AND k.Keyqusid = ? AND k.Keyanswer = ?";
@@ -649,9 +656,7 @@ class FindPassword extends JFrame implements ActionListener {
 
     // DB에서 힌트 질문 로드
     private String[] loadKeyQuestionsFromDB() {
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp",
-                "mih", "ansxoddl123")) {
+        try  {
 
             String sql = "SELECT KeyQus FROM KeyQus";
             PreparedStatement pstmt = conn.prepareStatement(sql);
@@ -667,7 +672,7 @@ class FindPassword extends JFrame implements ActionListener {
 
             rs.close();
             pstmt.close();
-            conn.close();
+
 
             return questions.toArray(new String[0]); // 리스트를 배열로 변환 후 반환
 
@@ -709,6 +714,7 @@ public class Main {
         win.setLocation(100, 200);
         win.setVisible(true);
     }
+
 
 
 }
