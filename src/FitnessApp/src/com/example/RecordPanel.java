@@ -1,6 +1,7 @@
 package com.example;
 
 import javax.swing.*;
+import javax.xml.transform.Result;
 import java.awt.*;
 import java.awt.List;
 import java.util.List.*;
@@ -31,6 +32,24 @@ public class RecordPanel extends JPanel implements ActionListener {
         this.loginedpass = passwd;
         this.conn = conn;
 
+        try {
+            String execid = "SELECT Execid ,Execname FROM Exec ORDER BY Execid ASC";
+            PreparedStatement ps2 = conn.prepareStatement(execid);
+            ResultSet rs = ps2.executeQuery();
+
+            while(rs.next()){
+                execlist.add(rs.getString("Execname"));
+            }
+
+            for (String exec : execlist) {
+                System.out.println(exec);
+            }
+        }
+
+        catch(SQLException e){
+            e.printStackTrace();
+        }
+
         setLayout(new GridLayout(1, 2,20,0));
 
         selectedYear = Calendar.getInstance().get(Calendar.YEAR);
@@ -45,21 +64,6 @@ public class RecordPanel extends JPanel implements ActionListener {
         placeholderLabel.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
         RecordGrid.add(placeholderLabel, BorderLayout.NORTH);
         add(RecordGrid);
-
-        try {
-            String execid = "SELECT Execname FROM Exec";
-            PreparedStatement ps2 = conn.prepareStatement(execid);
-            ResultSet rs = ps2.executeQuery();
-
-            while(rs.next()){
-                execlist.add(rs.getString("Execname"));
-            }
-
-        }
-
-        catch(SQLException e){
-            e.printStackTrace();
-        }
     }
 
     private JPanel SearchDailyExec() {
@@ -130,7 +134,7 @@ public class RecordPanel extends JPanel implements ActionListener {
         }
         else{
             try {
-                String sql = "SELECT Execid,Execname FROM UserExec WHERE Userid=? AND Date = ?";
+                String sql = "SELECT Execid,Execname FROM UserExec WHERE Userid=? AND RecordDate = ?";
                 PreparedStatement ps = conn.prepareStatement(sql);
                 ps.setString(1, loginedid);
                 ps.setString(2, dateLabel.getText());
@@ -269,16 +273,9 @@ public class RecordPanel extends JPanel implements ActionListener {
     private void ExecRecordPanel(JPanel jpanel, String execname, JScrollPane jsp) {
         RecordGrid.removeAll();
 
-        java.util.List<JPanel> recordexecList = new java.util.ArrayList<>(); // 새로운 recordexec 리스트 생성
-        loadRecordExecs(execname, jpanel, recordexecList, jsp);
         RecordGrid.add(jpanel, BorderLayout.CENTER);
         RecordGrid.revalidate();
         RecordGrid.repaint();
-    }
-
-    private String getExecNameFromPanel(JPanel jpanel) {
-        JLabel label = (JLabel) jpanel.getComponent(0);
-        return label.getText();
     }
 
 
@@ -317,44 +314,143 @@ public class RecordPanel extends JPanel implements ActionListener {
         execimgpanel.setVisible(true);
 
 
+        JButton pluspanel;
         execdetail.add(execimgpanel);
 
         java.util.List<JPanel> recordexecList = new java.util.ArrayList<>();
-        JPanel recordexec = createRecordExecPanel(0);
-        recordexecList.add(recordexec);
-        execdetail.add(recordexec);
 
 
-        JButton pluspanel = (JButton) recordexec.getComponent(6);
+        try {
+            String sql = "SELECT SetCount, Kg, Count FROM ExecRecord WHERE Userid = ? AND ExecDate = ? AND Execid = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, loginedid); // 로그인된 사용자 ID
+            ps.setDate(2, Date.valueOf(dateLabel.getText())); // 현재 날짜
 
-        pluspanel.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                int index = recordexecList.size(); // 자동으로 recordexeclist 다음 인덱스 부여
-                JPanel newRecordExec = createRecordExecPanel(index);
 
-                recordexecList.add(newRecordExec);
-                execdetail.add(newRecordExec);
+            int execIndex = execlist.indexOf(execname);
+            ps.setInt(3, execIndex + 1);
 
-                try  {
-                    String sql = "INSERT INTO UserExec (Userid, Execid,Execname, Date, Duration) VALUES (?, ?, ?, ?, ?)";
-                    PreparedStatement ps = conn.prepareStatement(sql);
-                    ps.setString(1, loginedid);
-                    int i  = execlist.indexOf(execname);
-                    ps.setInt(2, i);
-                    ps.setString(3, execname); // 예제 운동 이
-                    ps.setDate(4, Date.valueOf(dateLabel.getText())); // 현재 날짜
-                    ps.setInt(5, index + 1); // 순서 저장
-                    ps.executeUpdate();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
+            ResultSet rs = ps.executeQuery();
+
+            String check = "SELECT COUNT(SetCount) FROM ExecRecord WHERE Userid = ? AND ExecDate = ? AND Execid = ?";
+            PreparedStatement ckps = conn.prepareStatement(check);
+            ckps.setString(1, loginedid);
+            ckps.setDate(2, Date.valueOf(dateLabel.getText()));
+            ckps.setInt(3, execIndex+1);
+
+            ResultSet ckrs = ckps.executeQuery();
+
+            // 데이터가 없을 경우 기본 패널 추가
+            if (ckrs.next()) {
+                int checknum = ckrs.getInt(1);
+                if(checknum==1){
+                    JPanel recordexec = createRecordExecPanel(0);
+                    recordexecList.add(recordexec);
+                    execdetail.add(recordexec);
+                    pluspanel = (JButton) recordexec.getComponent(6);
+
+                    pluspanel.addActionListener(new ActionListener() {
+                        @Override
+                        public void actionPerformed(ActionEvent e) {
+                            int index = recordexecList.size(); // 자동으로 recordexeclist 다음 인덱스 부여
+                            JPanel newRecordExec = createRecordExecPanel(index);
+
+                            recordexecList.add(newRecordExec);
+                            execdetail.add(newRecordExec);
+
+                            try  {
+                                String sql = "INSERT INTO ExecRecord (Userid, Execid, ExecDate, SetCount) VALUES (?, ?, ?, ?)";
+                                PreparedStatement ps = conn.prepareStatement(sql);
+                                ps.setString(1, loginedid);
+                                int i  = execlist.indexOf(execname);
+                                ps.setInt(2, i+1);// 예제 운동 이
+                                ps.setDate(3, Date.valueOf(dateLabel.getText())); // 현재 날짜
+                                ps.setInt(4, index + 1); // 순서 저장
+                                ps.executeUpdate();
+                            } catch (SQLException ex) {
+                                ex.printStackTrace();
+                            }
+
+                            execdetail.setPreferredSize(new Dimension(800, 500 + recordexecList.size() * 120));
+                            execdetail.revalidate();
+                            execdetail.repaint();
+                        }
+                    });
                 }
+                else{
+                    int panelIndex = 0;
+                    while (rs.next()) {
+                        int setCount = rs.getInt("SetCount");
+                        int kg = rs.getInt("Kg");
+                        int count = rs.getInt("Count");
 
-                execdetail.setPreferredSize(new Dimension(800, 500 + recordexecList.size() * 120));
-                execdetail.revalidate();
-                execdetail.repaint();
+                        // RecordExec 패널 생성 및 데이터 복원
+                        JPanel recordexec = createRecordExecPanel(panelIndex++);
+                        ((JTextField) recordexec.getComponent(0)).setText(String.valueOf(setCount)); // Set
+                        ((JTextField) recordexec.getComponent(2)).setText(String.valueOf(kg)); // Kg
+                        ((JTextField) recordexec.getComponent(4)).setText(String.valueOf(count)); // Count
+                        if (recordexec.getComponentCount() > 6) {
+                            pluspanel = (JButton) recordexec.getComponent(6);
+                            pluspanel.addActionListener(new ActionListener() {
+                                @Override
+                                public void actionPerformed(ActionEvent e) {
+                                    int index = recordexecList.size(); // 자동으로 recordexecList 다음 인덱스 부여
+                                    JPanel newRecordExec = createRecordExecPanel(index);
+
+                                    recordexecList.add(newRecordExec);
+                                    execdetail.add(newRecordExec);
+
+                                    try {
+                                        // 중복 여부 확인 후 삽입
+                                        String checkSql = "SELECT * FROM ExecRecord WHERE Userid = ? AND Execid = ? AND ExecDate = ? AND SetCount = ?";
+                                        PreparedStatement checkPs = conn.prepareStatement(checkSql);
+                                        checkPs.setString(1, loginedid);
+                                        int i = execlist.indexOf(execname);
+                                        checkPs.setInt(2, i + 1);
+                                        checkPs.setDate(3, Date.valueOf(dateLabel.getText()));
+                                        checkPs.setInt(4, index + 1);
+
+                                        ResultSet checkRs = checkPs.executeQuery();
+                                        if (!checkRs.next()) {
+                                            String sql = "INSERT INTO ExecRecord (Userid, Execid, ExecDate, SetCount) VALUES (?, ?, ?, ?)";
+                                            PreparedStatement ps = conn.prepareStatement(sql);
+                                            ps.setString(1, loginedid);
+                                            ps.setInt(2, i + 1);
+                                            ps.setDate(3, Date.valueOf(dateLabel.getText()));
+                                            ps.setInt(4, index + 1);
+                                            ps.executeUpdate();
+                                        }
+
+                                        checkRs.close();
+                                        checkPs.close();
+                                    } catch (SQLException ex) {
+                                        ex.printStackTrace();
+                                    }
+
+                                    execdetail.setPreferredSize(new Dimension(800, 500 + recordexecList.size() * 120));
+                                    execdetail.revalidate();
+                                    execdetail.repaint();
+                                }
+                            });
+                        }
+
+                        recordexecList.add(recordexec);
+                        execdetail.add(recordexec);
+                    }
+                }
             }
-        });
+
+            rs.close();
+            ps.close();
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+
+
+
+
+
+
         JScrollPane scrollPane = new JScrollPane(execdetail);
         scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
         scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
@@ -363,6 +459,7 @@ public class RecordPanel extends JPanel implements ActionListener {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try  {
+                    int totvolume = 0;
                     for (int i = 0; i < recordexecList.size(); i++) {
                         JPanel recordexec = recordexecList.get(i);
 
@@ -372,18 +469,82 @@ public class RecordPanel extends JPanel implements ActionListener {
                         int count = Integer.parseInt(((JTextField) recordexec.getComponent(4)).getText());
 
                         // 데이터 업데이트
-                        String sql = "UPDATE UserExec SET Kg = ?, Count = ? , Complete = ? WHERE Userid = ? AND Date = ? AND Duration = ?";
+                        String sql = "INSERT INTO ExecRecord (Userid, Execid, ExecDate, SetCount, Kg, Count) VALUES (?, ?, ?, ?, ?, ?) " +
+                                "ON DUPLICATE KEY UPDATE Kg = VALUES(Kg), Count = VALUES(Count)";
                         PreparedStatement ps = conn.prepareStatement(sql);
-                        ps.setInt(1, kg);
-                        ps.setInt(2, count);
-                        ps.setInt(3,1);
-                        ps.setString(4, loginedid);
-                        ps.setDate(5, Date.valueOf(dateLabel.getText())); // 현재 날짜
-                        ps.setInt(6, i + 1); // 순서 저장
+                        ps.setString(1, loginedid);
+                        ps.setInt(2,execlist.indexOf(execname)+1);
+                        ps.setDate(3, Date.valueOf(dateLabel.getText()));
+                        ps.setInt(4,i+1);
+                        ps.setInt(5, kg);
+                        ps.setInt(6, count);
+                        totvolume = totvolume + (kg * set * count);
                         ps.executeUpdate();
                     }
+
+                    String complete = "UPDATE UserExec SET Complete = ?, Totalcalories = ?, Totalvolume = ? WHERE RecordDate = ? AND Execid = ? AND Userid = ?";
+
+
+                    String totalset = "SELECT COUNT(SetCount) FROM ExecRecord WHERE ExecDate = ? AND Execid = ? AND Userid = ?";
+                    String weight = "SELECT Weight FROM User WHERE Userid = ?";
+                    String cal = "SELECT Calories FROM Exec WHERE Execid = ?";
+
+                    PreparedStatement comps = conn.prepareStatement(complete);
+
+                    int i  = execlist.indexOf(execname);
+
+                    System.out.println(i);
+
+                    PreparedStatement setps = conn.prepareStatement(totalset);
+
+                    setps.setDate(1,Date.valueOf(dateLabel.getText()));
+                    setps.setInt(2, i+1);
+                    setps.setString(3, loginedid);
+
+                    PreparedStatement weightps = conn.prepareStatement(weight);
+
+                    weightps.setString(1, loginedid);
+
+                    PreparedStatement  calps = conn.prepareStatement(cal);
+
+                    calps.setInt(1, i);
+
+                    ResultSet weightrs = weightps.executeQuery();
+                    ResultSet setrs = setps.executeQuery();
+                    ResultSet calrs = calps.executeQuery();
+
+
+                    int setnum=0, weightnum=0, calnum=0;
+
+                    if(setrs.next()){
+                        setnum = setrs.getInt(1);
+                    }
+
+                    if(weightrs.next()){
+                        weightnum = weightrs.getInt(1);
+                    }
+
+                    if(calrs.next()){
+                        calnum = calrs.getInt(1);
+                    }
+
+
+                    System.out.println("Executing Query: " + complete);
+                        comps.setInt(1,1);
+                        comps.setDouble(2, setnum * (calnum * weightnum * 3.5) / 200);
+                        comps.setInt(3, totvolume);
+                        comps.setDate(4,Date.valueOf(dateLabel.getText()));
+                        comps.setInt(5,i+1);
+                        comps.setString(6,loginedid);
+                        comps.executeUpdate();
+
+
+
+                    JOptionPane.showMessageDialog(null, "운동기록 성공", "성공", JOptionPane.INFORMATION_MESSAGE);
+
                 } catch (SQLException ex) {
                     ex.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "운동기록 실패", "실패", JOptionPane.INFORMATION_MESSAGE);
                 }
 
             }
@@ -445,41 +606,7 @@ public class RecordPanel extends JPanel implements ActionListener {
         return recordexec;
     }
 
-    private void loadRecordExecs(String execname, JPanel jpanel, java.util.List<JPanel> recordexecList, JScrollPane jsp) {
-        try  {
-            String sql = "SELECT Duration, Execname, Kg, Count " +
-                    "FROM UserExec WHERE Userid = ? AND Date = ? AND Execname = ?";
-            PreparedStatement ps = conn.prepareStatement(sql);
-            ps.setString(1, loginedid);  // 로그인 ID
-            ps.setDate(2, Date.valueOf(dateLabel.getText()));  // 선택 날짜
-            ps.setString(3, execname);  // 운동 이름
-            ResultSet rs = ps.executeQuery();
 
-
-            recordexecList.clear(); // 기존 리스트 초기화
-
-            while (rs.next()) {
-                int setcount = rs.getInt("Duration");
-                int kgValue = rs.getInt("Kg");
-                int count = rs.getInt("Count");
-
-                // recordexec 패널 생성 및 복원
-                JPanel recordexec = createRecordExecPanel(setcount - 1);
-                recordexecList.add(recordexec); // 리스트에 추가
-                jsp.add(recordexec); // 패널에 추가
-
-                // JTextField 값 복원
-                ((JTextField) recordexec.getComponent(0)).setText(String.valueOf(setcount)); // Set
-                ((JTextField) recordexec.getComponent(2)).setText(String.valueOf(kgValue)); // Kg
-                ((JTextField) recordexec.getComponent(4)).setText(String.valueOf(count));  // 회
-            }
-
-            jsp.revalidate();
-            jsp.repaint();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
 
 
 
