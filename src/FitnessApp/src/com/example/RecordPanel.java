@@ -1,9 +1,12 @@
-package com.example;
+package FitnessApp.src.com.example;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.xml.transform.Result;
 import java.awt.*;
 import java.awt.List;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.List.*;
 import java.awt.event.*;
 import java.util.Calendar;
@@ -295,6 +298,44 @@ public class RecordPanel extends JPanel implements ActionListener {
         RecordGrid.repaint();
     }
 
+    private BufferedImage getImageFromDatabase(String execname) {
+        try {
+            String query = "SELECT image FROM Exec_images WHERE Execname = ?";
+            PreparedStatement ps = conn.prepareStatement(query);
+            ps.setString(1, execname);
+
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                InputStream is = rs.getBinaryStream("image");
+                return ImageIO.read(is); // BLOB 데이터를 BufferedImage로 변환
+            }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null; // 이미지가 없거나 오류 발생 시 null 반환
+    }
+
+    class CustomImagePanel extends JPanel {
+        private BufferedImage image;
+
+        // 이미지 설정 메서드
+        public void setImage(BufferedImage img) {
+            this.image = img;
+            repaint(); // 이미지를 다시 그리기
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (image != null) {
+                // 패널 크기에 맞게 이미지 그리기
+                g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+            }
+        }
+    }
+
     private JScrollPane execdetails(String execname){
         JPanel execdetail = new JPanel();
         execdetail.setLayout(null);
@@ -308,14 +349,46 @@ public class RecordPanel extends JPanel implements ActionListener {
 
         execdetail.add(okbtn);
 
-        JPanel execimgpanel = new JPanel();
-        execimgpanel.setBounds(220, 100,300,300);
-        execimgpanel.setBackground(Color.RED);
+        CustomImagePanel execimgpanel = new CustomImagePanel();
+        execimgpanel.setBounds(220, 80, 300, 300);
+        execimgpanel.setBackground(Color.WHITE);
+
+        // 데이터베이스에서 이미지 로드
+        BufferedImage img = getImageFromDatabase(execname);
+        if (img != null) {
+            execimgpanel.setImage(img); // CustomImagePanel의 setImage 호출
+        } else {
+            System.out.println("이미지를 찾을 수 없습니다: " + execname);
+        }
+
         execimgpanel.setVisible(true);
 
 
-        JButton pluspanel;
         execdetail.add(execimgpanel);
+
+        JLabel execmemo = new JLabel();
+        try{
+            String execm = "SELECT Memo FROM Exec WHERE Execname = ? ";
+            PreparedStatement mmps = conn.prepareStatement(execm);
+            mmps.setString(1,execname);
+            ResultSet mmrs = mmps.executeQuery();
+
+            if(mmrs.next()){
+                execmemo.setText(mmrs.getString(1));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        execmemo.setFont(new Font("Malgun Gothic", Font.BOLD, 20));
+        execmemo.setBounds(270, 370, 300, 70);
+        execmemo.setVisible(true);
+
+        execdetail.add(execmemo);
+
+        JButton pluspanel;
+
 
         java.util.List<JPanel> recordexecList = new java.util.ArrayList<>();
 

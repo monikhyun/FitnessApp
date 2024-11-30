@@ -1,4 +1,4 @@
-package com.example;
+package FitnessApp.src.com.example;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -6,6 +6,8 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -166,6 +168,7 @@ class NewMember extends JFrame implements ActionListener{
     public void DBLogin (){
         try{
             conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123");
+
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -721,6 +724,7 @@ public class Main {
         win.setSize(350, 300);
         win.setLocation(100, 200);
         win.setVisible(true);
+
     }
 
 
