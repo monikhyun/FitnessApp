@@ -149,7 +149,7 @@ class CalendarPanel extends JPanel {
                     lastClickedButton.setOpaque(true);
                     lastClickedButton.setFont(lastClickedButton.getFont().deriveFont(PLAIN));
                     selectedDay = finalI; // 선택된 날짜 저장
-                    int selectedMonth = finalMonth;
+                    selectedMonth = finalMonth;
                     updateSummaryPanel(selectedDay, selectedMonth); // 선택한 날짜에 대한 정보 업데이트
                     dateButton.setBackground(new Color(255, 255, 200));
                     dateButton.setFont(dateButton.getFont().deriveFont(Font.BOLD));
@@ -255,7 +255,7 @@ class CalendarPanel extends JPanel {
     private void addExercise(int execid, String execname) {
         try  {
             // UserExec 테이블에 운동 기록 추가
-            String insertSql = "INSERT INTO UserExec (Userid,Execid,ExecName,Date) VALUES (?, ?, ?, ?)";
+            String insertSql = "INSERT INTO UserExec (Userid,Execid,ExecName,RecordDate) VALUES (?, ?, ?, ?)";
             try (PreparedStatement ps = conn.prepareStatement(insertSql)) {
                 // 선택된 날짜를 SQL date 형식으로 변환
                 String dateStr = String.format("%d-%02d-%02d", selectedYear, selectedMonth, selectedDay);
@@ -270,9 +270,21 @@ class CalendarPanel extends JPanel {
 
                 // UI 업데이트를 위해 운동 목록에 추가
                 dailyExercises.add(execname);
+
+                String recordsql = "INSERT INTO ExecRecord(Userid, Execid, ExecDate) VALUES (?,?,?)";
+                PreparedStatement pst = conn.prepareStatement(recordsql);
+
+                pst.setString(1, loginedid);
+                pst.setInt(2, execid);
+                pst.setDate(3, sqlDate);
+
+                pst.executeUpdate();
+
                 JOptionPane.showMessageDialog(this, "운동이 추가되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
             }
+
         } catch (SQLException e) {
+            e.printStackTrace(); // 예외 스택 추적 출력
             JOptionPane.showMessageDialog(this, "운동 추가 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
@@ -282,7 +294,7 @@ class CalendarPanel extends JPanel {
 
         // 데이터베이스에서 해당 날짜의 운동 기록을 조회
 
-            String sql = "SELECT Execname FROM UserExec WHERE UserID = ? AND DATE = ?";
+            String sql = "SELECT Execname FROM UserExec WHERE UserID = ? AND RecordDate = ?";
             try (PreparedStatement ps = conn.prepareStatement(sql)) {
                 String dateStr = String.format("%d-%02d-%02d", selectedYear, month, day);
                 Date sqlDate = Date.valueOf(dateStr);
