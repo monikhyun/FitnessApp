@@ -135,28 +135,28 @@ public class StatsPanel extends JPanel {
             }
 
             String volumeQuery = """
-            select 
-                case 
-                    when E.Category = 'Back' then '등'
-                    when E.Category = 'Chest' then '가슴'
-                    when E.Category = 'Shoulder' then '어깨'
-                    when E.Category = 'Lower-body' then '하체'
-                    else E.Category
-                end as Category,
-                sum(case when month(UE.RecordDate) = ? and year(UE.RecordDate) = ? then UE.TotalVolume else 0 end) as CurrentMonthVolume,
-                sum(case when month(UE.RecordDate) = ? and year(UE.RecordDate) = ? then UE.TotalVolume else 0 end) as LastMonthVolume
-            from Exec E
-            left join UserExec UE on E.Execid = UE.Execid and UE.Userid = ?
-            where E.Category in ('Back', 'Chest', 'Shoulder', 'Lower-body')
-            group by E.Category
-            union all
-            select 
-                '전체' as Category,
-                sum(case when month(UE.RecordDate) = ? and year(UE.RecordDate) = ? then UE.TotalVolume else 0 end) as CurrentMonthVolume,
-                sum(case when month(UE.RecordDate) = ? and year(UE.RecordDate) = ? then UE.TotalVolume else 0 end) as LastMonthVolume
-            from UserExec UE
-            join Exec E on UE.Execid = E.Execid
-            where UE.Userid = ?;
+            SELECT 
+                CASE 
+                    WHEN E.Category = 'Back' THEN '등'
+                    WHEN E.Category = 'Chest' THEN '가슴'
+                    WHEN E.Category = 'Shoulder' THEN '어깨'
+                    WHEN E.Category = 'Lower-body' THEN '하체'
+                    ELSE E.Category
+                END AS Category,
+                SUM(CASE WHEN MONTH(UE.RecordDate) = ? AND YEAR(UE.RecordDate) = ? THEN UE.TotalVolume ELSE 0 END) AS CurrentMonthVolume,
+                SUM(CASE WHEN MONTH(UE.RecordDate) = ? AND YEAR(UE.RecordDate) = ? THEN UE.TotalVolume ELSE 0 END) AS LastMonthVolume
+            FROM Exec E
+            LEFT JOIN UserExec UE ON E.Execid = UE.Execid AND UE.Userid = ?
+            WHERE E.Category IN ('Back', 'Chest', 'Shoulder', 'Lower-body')
+            GROUP BY E.Category
+            UNION ALL
+            SELECT 
+                '전체' AS Category,
+                SUM(CASE WHEN MONTH(UE.RecordDate) = ? AND YEAR(UE.RecordDate) = ? THEN UE.TotalVolume ELSE 0 END) AS CurrentMonthVolume,
+                SUM(CASE WHEN MONTH(UE.RecordDate) = ? AND YEAR(UE.RecordDate) = ? THEN UE.TotalVolume ELSE 0 END) AS LastMonthVolume
+            FROM UserExec UE
+            JOIN Exec E ON UE.Execid = E.Execid
+            WHERE UE.Userid = ?;
             """;
 
             try (PreparedStatement stmt = conn.prepareStatement(volumeQuery)) {
@@ -221,7 +221,6 @@ public class StatsPanel extends JPanel {
                 stmt.setInt(4, lastMonth.get(Calendar.YEAR));
                 stmt.setString(5, loginedid);
 
-
                 stmt.setInt(6, currentMonth.get(Calendar.MONTH) + 1);
                 stmt.setInt(7, currentMonth.get(Calendar.YEAR));
                 stmt.setInt(8, lastMonth.get(Calendar.MONTH) + 1);
@@ -245,36 +244,66 @@ public class StatsPanel extends JPanel {
 
                         // 유저의 목표에 따른 상태 변화
                         String TypeQuery = """
-                        select GoalType
-                        from User
-                        where Userid = ?;
+                        SELECT GoalType, Weight
+                        FROM User
+                        WHERE Userid = ?;
                         """;
                         try (PreparedStatement stmt2 = conn.prepareStatement(TypeQuery)) {
                             stmt2.setString(1, loginedid);
                             try (ResultSet rs2 = stmt2.executeQuery()) {
                                 while (rs2.next()) {
                                     String goalType = rs2.getString("GoalType");
+                                    int weight = rs2.getInt("Weight");
+
+                                    // 단백질, 탄수화물, 지방 기준 설정
+                                    int proteinThreshold = 0; int carboThreshold = 0; int fatThreshold = 0;
+
+                                    // 목표에 따른 섭취 기준 설정
                                     if (goalType.equals("다이어트")) {
-                                        if (currentMonthTotal > lastMonthTotal)
-                                            status = "양이 많아요.. 조금 줄여봐요";
-                                        else if (currentMonthTotal < lastMonthTotal)
-                                            status = "아주 잘하고 있어요!!";
-                                    } else {
-                                        if (currentMonthTotal > lastMonthTotal)
-                                            status = "아주 잘하고 있어요!!";
-                                        else if (currentMonthTotal < lastMonthTotal)
-                                            status = "부족해요.. 조금 더 열심히 먹어야 돼요";
+                                        // 다이어트의 경우 몸무게 1kg당 단백질 1g, 탄수화물 2g, 지방 0.8g 권장
+                                        proteinThreshold = weight * 1; // 단백질
+                                        carboThreshold = weight * 2;  // 탄수화물
+                                        fatThreshold = weight * 1;    // 지방
+                                    } else { // 목표가 벌크업
+                                        // 벌크업의 경우 몸무게 1kg당 단백질 2g, 탄수화물 4g, 지방 1g 권장
+                                        proteinThreshold = weight * 2; // 단백질
+                                        carboThreshold = weight * 4;   // 탄수화물
+                                        fatThreshold = weight * 1;     // 지방
+                                    }
+                                    // 각 영양소별 상태 설정
+                                    switch (nutrient) {
+                                        case "단백질":
+                                            if (proteinThreshold <= currentMonthTotal && currentMonthTotal <= proteinThreshold + 20)
+                                                status = "단백질 섭취를 아주 잘하고 있어요!!";
+                                            else if (currentMonthTotal < proteinThreshold)
+                                                status = "단백질을 너무 적게 먹었어요! ";
+                                            else
+                                                status = "단백질을 과도 섭취했어요! ";
+                                            break;
+                                        case "탄수화물":
+                                            if (carboThreshold - 10 <= currentMonthTotal && currentMonthTotal <= carboThreshold + 10)
+                                                status = "탄수화물 섭취를 아주 잘하고 있어요!!";
+                                            else if (currentMonthTotal < carboThreshold)
+                                                status = "탄수화물을 너무 적게 먹었어요!";
+                                            else
+                                                status = "탄수화물을 과도 섭취했어요!";
+                                            break;
+                                        case "지방":
+                                            if (fatThreshold - 10 <= currentMonthTotal && currentMonthTotal <= fatThreshold + 10)
+                                                status = "지방 섭취를 아주 잘하고 있어요!!";
+                                            else if (currentMonthTotal < fatThreshold)
+                                                status = "지방 섭취를 너무 적게 먹었어요!";
+                                            else
+                                                status = "지방을 과도 섭취했어요!";
+                                            break;
                                     }
                                 }
                             }
                         }
-
                         nutritionTableModel.addRow(new Object[]{nutrient, currentMonthTotal, lastMonthTotal, status});
                     }
                 }
-
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "데이터를 불러오는 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
