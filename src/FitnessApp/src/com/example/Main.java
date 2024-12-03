@@ -1,4 +1,4 @@
-package FitnessApp.src.com.example;
+package JavaProject;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -337,6 +337,11 @@ class NewMember extends JFrame implements ActionListener{
             pstmtUKey.setInt(2, comboBox.getSelectedIndex()); // Keyqusid
             pstmtUKey.setString(3, answer.getText().trim()); // Keyanswer
             pstmtUKey.executeUpdate();
+
+            String insertforComplete = "insert into forComplete(Userid) Values (?)";
+            PreparedStatement psfor = conn.prepareStatement(insertforComplete);
+            psfor.setString(1, id.getText().trim());
+            psfor.executeUpdate();
 
             JOptionPane.showMessageDialog(this, "회원가입을 완료하였습니다.!", "회원가입 성공", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
