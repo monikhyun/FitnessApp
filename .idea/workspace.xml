@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="RecordPanel 기록Panel UI개선 및 운동별 이미지 폴더 추가">
-      <change afterPath="$PROJECT_DIR$/src/FitnessApp/images/바벨로우.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FitnessApp/images/시티드로우.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FitnessApp/images/인클라인 덤벨프레스.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FitnessApp/images/인클라인 벤치프레스.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/CalenderPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/CalenderPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" afterDir="false" />
-    </list>
+    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="RecordPanel 기록Panel UI개선 및 운동별 이미지 폴더 추가" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -99,8 +91,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java</url>
-          <line>697</line>
-          <properties class="com.example.MessageDialog" method="&lt;init&gt;">
+          <line>689</line>
+          <properties class="com.example.FindPassword">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
