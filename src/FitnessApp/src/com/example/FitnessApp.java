@@ -1,4 +1,4 @@
-package FitnessApp.src.com.example;
+package com.example;
 
 import javax.swing.*;
 import java.awt.*;

@@ -1,4 +1,4 @@
-package FitnessApp.src.com.example;
+package com.example;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -27,7 +27,7 @@ class Login extends JFrame implements ActionListener{
 
     public void DBLogin (){
         try{
-            conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123");
+            conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123");
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -167,7 +167,7 @@ class NewMember extends JFrame implements ActionListener{
 
     public void DBLogin (){
         try{
-            conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123");
+            conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123");
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -527,7 +527,7 @@ class FindID extends JFrame implements ActionListener {
 
     private void findID() {
         try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp",
+                "jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp",
                 "mih", "ansxoddl123")) {
 
             // SQL 쿼리 준비
@@ -552,7 +552,7 @@ class FindID extends JFrame implements ActionListener {
 
     private String[] loadKeyQuestionsFromDB() {
         try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp",
+                "jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp",
                 "mih", "ansxoddl123")) {
 
             String sql = "SELECT KeyQus FROM KeyQus";
@@ -693,7 +693,6 @@ class FindPassword extends JFrame implements ActionListener {
         }
     }
 }
-
 
 
 class MessageDialog extends JDialog implements ActionListener{

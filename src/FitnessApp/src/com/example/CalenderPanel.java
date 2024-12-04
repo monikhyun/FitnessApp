@@ -1,4 +1,4 @@
-package FitnessApp.src.com.example;
+package com.example;
 
 import javax.swing.*;
 import java.awt.*;
@@ -19,7 +19,7 @@ class CalendarPanel extends JPanel {
     private String loginedid, loginedpass;
 
     private ArrayList<String> dailyExercises = new ArrayList<>();
-    private static final String dburl = "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp";
+    private static final String dburl = "jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp";
     private static final String dbusr = "mih";
     private static final String dbpass = "ansxoddl123";
 
