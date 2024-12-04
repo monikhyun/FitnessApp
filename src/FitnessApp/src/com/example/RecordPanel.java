@@ -1,12 +1,9 @@
 package com.example;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.xml.transform.Result;
 import java.awt.*;
 import java.awt.List;
-import java.awt.image.BufferedImage;
-import java.io.InputStream;
 import java.util.List.*;
 import java.awt.event.*;
 import java.util.Calendar;
@@ -298,44 +295,6 @@ public class RecordPanel extends JPanel implements ActionListener {
         RecordGrid.repaint();
     }
 
-    private BufferedImage getImageFromDatabase(String execname) {
-        try {
-            String query = "SELECT image FROM Exec_images WHERE Execname = ?";
-            PreparedStatement ps = conn.prepareStatement(query);
-            ps.setString(1, execname);
-
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) {
-                InputStream is = rs.getBinaryStream("image");
-                return ImageIO.read(is); // BLOB 데이터를 BufferedImage로 변환
-            }
-            rs.close();
-            ps.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null; // 이미지가 없거나 오류 발생 시 null 반환
-    }
-
-    class CustomImagePanel extends JPanel {
-        private BufferedImage image;
-
-        // 이미지 설정 메서드
-        public void setImage(BufferedImage img) {
-            this.image = img;
-            repaint(); // 이미지를 다시 그리기
-        }
-
-        @Override
-        protected void paintComponent(Graphics g) {
-            super.paintComponent(g);
-            if (image != null) {
-                // 패널 크기에 맞게 이미지 그리기
-                g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
-            }
-        }
-    }
-
     private JScrollPane execdetails(String execname){
         JPanel execdetail = new JPanel();
         execdetail.setLayout(null);
@@ -349,46 +308,14 @@ public class RecordPanel extends JPanel implements ActionListener {
 
         execdetail.add(okbtn);
 
-        CustomImagePanel execimgpanel = new CustomImagePanel();
-        execimgpanel.setBounds(220, 80, 300, 300);
-        execimgpanel.setBackground(Color.WHITE);
-
-        // 데이터베이스에서 이미지 로드
-        BufferedImage img = getImageFromDatabase(execname);
-        if (img != null) {
-            execimgpanel.setImage(img); // CustomImagePanel의 setImage 호출
-        } else {
-            System.out.println("이미지를 찾을 수 없습니다: " + execname);
-        }
-
+        JPanel execimgpanel = new JPanel();
+        execimgpanel.setBounds(220, 100,300,300);
+        execimgpanel.setBackground(Color.RED);
         execimgpanel.setVisible(true);
 
 
-        execdetail.add(execimgpanel);
-
-        JLabel execmemo = new JLabel();
-        try{
-            String execm = "SELECT Memo FROM Exec WHERE Execname = ? ";
-            PreparedStatement mmps = conn.prepareStatement(execm);
-            mmps.setString(1,execname);
-            ResultSet mmrs = mmps.executeQuery();
-
-            if(mmrs.next()){
-                execmemo.setText(mmrs.getString(1));
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        execmemo.setFont(new Font("Malgun Gothic", Font.BOLD, 20));
-        execmemo.setBounds(270, 370, 300, 70);
-        execmemo.setVisible(true);
-
-        execdetail.add(execmemo);
-
         JButton pluspanel;
-
+        execdetail.add(execimgpanel);
 
         java.util.List<JPanel> recordexecList = new java.util.ArrayList<>();
 
@@ -628,36 +555,35 @@ public class RecordPanel extends JPanel implements ActionListener {
 
     public static JPanel createRecordExecPanel(int index) {
         JPanel recordexec = new JPanel();
-        recordexec.setBounds(80, 450 + index * 80, 600, 70);
+        recordexec.setBackground(Color.GRAY);
+        recordexec.setBounds(80, 500 + index * 120, 600, 100);
         recordexec.setLayout(null);
 
-
         JLabel setinput = new JLabel("Set");
-        setinput.setBounds(130, 20, 40, 40);
+        setinput.setBounds(130, 30, 50, 50);
 
         JTextField set = new JTextField();
-        set.setBounds(70, 20, 40, 40);
+        set.setBounds(70, 30, 50, 50);
         set.setHorizontalAlignment(SwingConstants.CENTER);
 
         JLabel kginput = new JLabel("Kg");
-        kginput.setBounds(260, 20, 40, 40);
+        kginput.setBounds(260, 30, 50, 50);
 
         JTextField kg = new JTextField();
-        kg.setBounds(200, 20, 40, 40);
+        kg.setBounds(200, 30, 50, 50);
         kg.setHorizontalAlignment(SwingConstants.CENTER);
 
         JLabel cntinput = new JLabel("회");
-        cntinput.setBounds(380, 20, 40, 40);
+        cntinput.setBounds(380, 30, 50, 50);
 
         JTextField cnt = new JTextField();
-        cnt.setBounds(320, 20, 40, 40);
+        cnt.setBounds(320, 30, 50, 50);
         cnt.setHorizontalAlignment(SwingConstants.CENTER);
 
         if(index==0) {
             JButton pluspanel = new JButton("+");
-            pluspanel.setBounds(480, 20, 40, 40);
-            pluspanel.setFont(new Font("Malgun Gothic", Font.PLAIN, 7));
-
+            pluspanel.setBounds(480, 30, 50, 50);
+            pluspanel.setFont(new Font("Malgun Gothic", Font.PLAIN, 20));
 
             recordexec.add(set);
             recordexec.add(setinput);

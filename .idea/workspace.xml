@@ -118,8 +118,8 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java</url>
-          <line>696</line>
-          <properties class="com.example.MessageDialog">
+          <line>697</line>
+          <properties class="com.example.MessageDialog" method="&lt;init&gt;">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>

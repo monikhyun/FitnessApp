@@ -695,6 +695,7 @@ class FindPassword extends JFrame implements ActionListener {
 }
 
 
+
 class MessageDialog extends JDialog implements ActionListener{
     JButton ok;
     MessageDialog(JFrame parent, String title, boolean mode, String msg)

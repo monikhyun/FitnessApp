@@ -2,161 +2,317 @@ package JavaProjects;
 
 import javax.swing.*;
 import java.awt.*;
-import javax.swing.table.DefaultTableModel;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
 
 
-public class StatsPanel extends JPanel {   // flowLayout이 적용된거임
-    private JLabel workoutStatLabel;
 
-    private JTable volumeTable;
-    private JTable nutritionTable;
-    private DefaultTableModel volumeTableModel;
-    private DefaultTableModel nutritionTableModel;
+public class StatsPanel extends JPanel {
+    private LocalDate currentMonth;
+    private JLabel monthLabel;
+    private VolumeChartPanel volumePanel;
+    private WorkoutChartPanel workoutPanel;
+    private NutritionChartPanel nutritionPanel;
+    private String loginedid, loginedpass;
+    private Connection conn;
 
-    public StatsPanel() {
-        setLayout(new GridLayout(3, 1)); // 세 개의 구간으로 나눔
+    public StatsPanel(String loginedid, String loginedpass, Connection conn) {
+        this.loginedid = loginedid;
+        this.loginedpass = loginedpass;
+        this.conn = conn;
 
-        // 운동량 통계 구간
-        JPanel workoutStatPanel = new JPanel();
-        workoutStatPanel.setBorder(BorderFactory.createTitledBorder("운동 횟수"));
-        workoutStatLabel = new JLabel();
-        workoutStatPanel.add(workoutStatLabel);
-        add(workoutStatPanel);
+        setLayout(new BorderLayout());
 
+        // 현재 월 초기화
+        currentMonth = LocalDate.now().withDayOfMonth(1);
 
-        // 운동 부위별 볼륨 테이블
-        JPanel volumePanel = new JPanel(new BorderLayout());
+        // 상단 패널
+        JPanel topPanel = new JPanel();
+        JButton prevButton = new JButton("<");
+        JButton nextButton = new JButton(">");
+        monthLabel = new JLabel(formatMonth(currentMonth), SwingConstants.CENTER);
+
+        prevButton.addActionListener(e -> {
+            currentMonth = currentMonth.minusMonths(1);
+            updateMonth();
+        });
+
+        nextButton.addActionListener(e -> {
+            currentMonth = currentMonth.plusMonths(1);
+            updateMonth();
+        });
+
+        topPanel.add(prevButton);
+        topPanel.add(monthLabel);
+        topPanel.add(nextButton);
+        add(topPanel, BorderLayout.NORTH);
+
+        // 중앙 패널
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(null); // 레이아웃 매니저 해제
+
+        volumePanel = new VolumeChartPanel();
         volumePanel.setBorder(BorderFactory.createTitledBorder("운동 볼륨 통계"));
-        String[] volumeColumns = {"부위", "총 볼륨 (kg)"};
-        String[] volumeRows = {"전체", "등", "가슴", "어깨", "하체"};
-        volumeTableModel = new DefaultTableModel(volumeColumns, 0);
-        volumeTable = new JTable(volumeTableModel);
-        volumePanel.add(new JScrollPane(volumeTable), BorderLayout.CENTER);
-        add(volumePanel);
+        volumePanel.setBounds(50, 50, 700, 650);
+        mainPanel.add(volumePanel);
 
+        workoutPanel = new WorkoutChartPanel();
+        workoutPanel.setBorder(BorderFactory.createTitledBorder("운동 횟수 통계"));
+        workoutPanel.setBounds(800, 50, 500, 300);
+        mainPanel.add(workoutPanel);
 
-        // 영양소 섭취량 테이블
-        JPanel nutritionPanel = new JPanel(new BorderLayout());
+        nutritionPanel = new NutritionChartPanel();
         nutritionPanel.setBorder(BorderFactory.createTitledBorder("영양소 섭취 통계"));
-        String[] nutritionColumns = {"영양소", "섭취량 (g)"};
-        String[] nutritionRows = {"단백질", "탄수화물", "지방"};
-        nutritionTableModel = new DefaultTableModel(nutritionColumns, 0);
-        nutritionTable = new JTable(nutritionTableModel);
-        nutritionPanel.add(new JScrollPane(nutritionTable), BorderLayout.CENTER);
-        add(nutritionPanel);
+        nutritionPanel.setBounds(800, 400, 500, 300);
+        mainPanel.add(nutritionPanel);
+
+        add(mainPanel, BorderLayout.CENTER);
 
         // 데이터 초기화
-        initializeVolumeTable(volumeRows);
-        initializeNutritionTable(nutritionRows);
-
-        // 데이터 갱신
-        updateStatsFromDatabase();
-    }
-    private void initializeVolumeTable(String[] rows) {
-        for (String row : rows) {
-            volumeTableModel.addRow(new Object[]{row, ""});
-        }
+        updatePanels(currentMonth.format(DateTimeFormatter.ofPattern("yyyy-MM")));
     }
 
-    private void initializeNutritionTable(String[] rows) {
-        for (String row : rows) {
-            nutritionTableModel.addRow(new Object[]{row, ""});
-        }
+    private void updateMonth() {
+        monthLabel.setText(formatMonth(currentMonth));
+        String monthKey = currentMonth.format(DateTimeFormatter.ofPattern("yyyy-MM"));
+        updatePanels(monthKey);
+    }
+    private String formatMonth(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 M월");
+        return date.format(formatter);
     }
 
-    public void updateStatsFromDatabase() {
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.chqw04eu8yfk.ap-southeast-2.rds.amazonaws.com:3306/fitnessapp",
-                "mih", "ansxoddl123")) {
+    // 패널들 한번에 오류 처리
+    private void updatePanels(String month) {
+        try {
+            int[] workoutData = loadWorkoutData(month);
+            int[] volumeData = loadVolumeData(month);
+            int[] nutritionData = loadNutritionData(month);
 
-            // 운동량 데이터 가져오기
-            String workoutQuery = """
-                SELECT 
-                    COUNT(*) AS CurrentMonthCount,
-                    (SELECT COUNT(*) FROM UserExec WHERE MONTH(Date) = MONTH(CURDATE()) - 1 AND Userid = ?) AS LastMonthCount
-                FROM UserExec
-                WHERE MONTH(Date) = MONTH(CURDATE()) AND Userid = ?;
-            """;
-            try (PreparedStatement stmt = conn.prepareStatement(workoutQuery)) {
-                stmt.setString(1, "mih");
-                stmt.setString(2, "mih");
-                try (ResultSet rs = stmt.executeQuery()) {
-                    if (rs.next()) {
-                        int currentMonthCount = rs.getInt("CurrentMonthCount");
-                        int lastMonthCount = rs.getInt("LastMonthCount");
-                        workoutStatLabel.setText(String.format(
-                                "이번 달 %d회 운동했어요. 지난 달보다 %d회 %s 운동했어요.",
-                                currentMonthCount,
-                                Math.abs(currentMonthCount - lastMonthCount),
-                                currentMonthCount >= lastMonthCount ? "더" : "덜"
-                        ));
-                    }
-                }
-            }
-            // 부위별 볼륨 데이터 갱신
-            String volumeQuery = """
-                SELECT Category, SUM(TotalVolume) AS TotalVolume
-                FROM UserExec UE
-                JOIN Exec E ON UE.Execid = E.Execid
-                WHERE MONTH(UE.Date) = MONTH(CURDATE()) AND UE.Userid = ?
-                GROUP BY Category WITH ROLLUP;
-            """;
-            try (PreparedStatement stmt = conn.prepareStatement(volumeQuery)) {
-                stmt.setString(1, "mih");
-                try (ResultSet rs = stmt.executeQuery()) {
-                    int rowIndex = 0;
-                    while (rs.next()) {
-                        String category = rs.getString("Category") != null ? rs.getString("Category") : "전체";
-                        int totalVolume = rs.getInt("TotalVolume");
-                        volumeTableModel.setValueAt(totalVolume, rowIndex++, 1);
-                    }
-                }
-            }
+            workoutPanel.setWorkoutData(workoutData);
+            volumePanel.setVolumeData(volumeData);
+            nutritionPanel.setNutritionData(nutritionData);
 
-            // 영양소 섭취량 데이터 갱신
-            String nutritionQuery = """
-                SELECT '단백질' AS Nutrient, SUM(TotalProtein) AS Total
-                FROM NutritionSummary WHERE MONTH(Date) = MONTH(CURDATE()) AND Userid = ?
-                UNION ALL
-                SELECT '탄수화물', SUM(TotalCarbo)
-                FROM NutritionSummary WHERE MONTH(Date) = MONTH(CURDATE()) AND Userid = ?
-                UNION ALL
-                SELECT '지방', SUM(TotalFat)
-                FROM NutritionSummary WHERE MONTH(Date) = MONTH(CURDATE()) AND Userid = ?;
-            """;
-            try (PreparedStatement stmt = conn.prepareStatement(nutritionQuery)) {
-                stmt.setString(1, "a1");
-                stmt.setString(2, "a1");
-                stmt.setString(3, "a1");
-                try (ResultSet rs = stmt.executeQuery()) {
-                    int rowIndex = 0;
-                    while (rs.next()) {
-                        String nutrient = rs.getString("Nutrient");
-                        int total = rs.getInt("Total");
-                        nutritionTableModel.setValueAt(total, rowIndex++, 1);
-                    }
-                }
-            }
+            workoutPanel.repaint();
+            volumePanel.repaint();
+            nutritionPanel.repaint();
         } catch (SQLException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(this, "데이터를 불러오는 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "데이터를 가져오는 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
     }
-    public static void main(String[] args) {
+    // 운동 볼륨 데이터 가져오기
+    private int[] loadVolumeData(String month) throws SQLException {
+        String query = """
+        SELECT e.Category, SUM(ue.Totalvolume) AS total_volume 
+        FROM UserExec ue
+        JOIN Exec e ON ue.Execid = e.Execid
+        WHERE ue.Userid = ? AND DATE_FORMAT(ue.RecordDate, '%Y-%m') = ? AND ue.Complete = 1 
+        GROUP BY e.Category
+        """;
 
-        JFrame frame = new JFrame("통계 화면");
-        StatsPanel statsPanel = new StatsPanel();
+        int[] volumeData = {0, 0, 0, 0, 0}; // 등, 가슴, 어깨, 하체, 전체 총 볼륨
 
-        statsPanel.updateStatsFromDatabase();
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, loginedid);
+            stmt.setString(2, month);
 
-        frame.add(statsPanel);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(600, 400);
-        frame.setVisible(true);
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String category = rs.getString("Category");
+                int totalVolume = rs.getInt("total_volume");
+
+                if (category.equals("Back")) {
+                    volumeData[0] = totalVolume;
+                } else if (category.equals("Chest")) {
+                    volumeData[1] = totalVolume;
+                } else if (category.equals("Shoulder")) {
+                    volumeData[2] = totalVolume;
+                } else if (category.equals("Lower-body")) {
+                    volumeData[3] = totalVolume;
+                }
+            }
+            // "전체" 총 볼륨 계산 (모든 부위의 총합)
+            volumeData[4] = volumeData[0] + volumeData[1] + volumeData[2] + volumeData[3];
+        }
+        return volumeData;
+    }
+    // 운동 횟수 데이터 가져오기
+    private int[] loadWorkoutData(String month) throws SQLException {
+        String query = """
+            SELECT RecordDate, COUNT(DISTINCT Execid) AS workout_days
+            FROM UserExec 
+            WHERE Userid = ? 
+            AND DATE_FORMAT(RecordDate, '%Y-%m') = ? 
+            AND Complete = 1
+            GROUP BY RecordDate
+            ORDER BY RecordDate
+            """;
+
+        int[] workoutData = {0, 0, 0, 0};
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, loginedid);
+            stmt.setString(2, month);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                Date recordDate = rs.getDate("RecordDate");
+                int workoutDays = rs.getInt("workout_days");
+
+                // 해당 날짜가 어느 주에 속하는지 구하기
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(recordDate);
+                int weekOfMonth = calendar.get(Calendar.WEEK_OF_MONTH);
+
+                if (weekOfMonth >= 1 && weekOfMonth <= 4) {
+                    workoutData[weekOfMonth - 1] += workoutDays;
+                }
+            }
+        }
+        return workoutData;
+    }
+    // 영양소 데이터 가져오기
+    private int[] loadNutritionData(String month) throws SQLException {
+        String query = """
+            SELECT SUM(d.Carbo * ud.count) AS total_carbo, SUM(d.Protein * ud.count) AS total_protein, SUM(d.Fat * ud.count) AS total_fat
+            FROM Userdiet ud
+            JOIN Diet d ON ud.Foodname = d.Foodname
+            WHERE ud.Userid = ? AND DATE_FORMAT(ud.Date, '%Y-%m') = ? 
+            GROUP BY ud.Userid
+            """;
+
+        int[] nutritionData = {0, 0, 0};    // 탄수화물, 단백질, 지방
+
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, loginedid);
+            stmt.setString(2, month);
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                nutritionData[0] = rs.getInt("total_carbo");
+                nutritionData[1] = rs.getInt("total_protein");
+                nutritionData[2] = rs.getInt("total_fat");
+            }
+        }
+        return nutritionData;
     }
 
+    // 부위별 볼륨 차트 패널
+    class VolumeChartPanel extends JPanel {
+        private int[] volumeData = {0, 0, 0, 0};
 
+        public void setVolumeData(int[] data) {
+            volumeData = data;
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            String[] labels = {"등", "가슴", "어깨", "하체", "총 볼륨"};
+            int max = 25000;
+
+            int width = getWidth() - 70;
+            int height = getHeight() - 40;
+            int originX = 50;
+            int originY = height + 20;
+
+            // Y축
+            g.drawLine(originX, originY, originX, 30);
+            g.drawString("볼륨 (kg)", originX - 45, 30);
+
+            // X축
+            g.drawLine(originX, originY, width + 10, originY);
+
+            // 막대 그래프
+            int barWidth = (width - 20) / volumeData.length;
+            for (int i = 0; i < volumeData.length; i++) {
+                int barHeight = volumeData[i] * height / max;
+                int x = originX + (i * barWidth) + 10;
+                int y = originY - barHeight;
+                g.setColor(new Color(97, 155, 250));
+                g.fillRect(x, y, barWidth - 10, barHeight);
+                g.setColor(Color.BLACK);
+                g.drawString(labels[i], x + 5, originY + 15);
+                g.drawString(volumeData[i] + " kg", x + 5, y - 5);
+
+            }
+        }
+    }
+
+    // 운동량 차트 패널
+    class WorkoutChartPanel extends JPanel {
+        private int[] workoutData = {0, 0, 0, 0};
+
+        public void setWorkoutData(int[] data) {
+            workoutData = data;
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            String[] weekLabels = {"첫째 주", "둘째 주", "셋째 주", "넷째 주"};
+            int max = 31;
+
+            int width = getWidth() - 100;
+            int height = getHeight() - 50;
+            int originX = 50;
+            int originY = height + 20 ;
+
+            // Y축
+            g.drawLine(originX, originY, originX, 30);
+            g.drawString("운동 횟수", originX - 45, 30);
+
+            // X축
+            g.drawLine(originX, originY, width + 10, originY);
+
+            // 데이터 표시
+            int prevX = originX, prevY = originY - (workoutData[0] * height / max);
+            for (int i = 0; i < workoutData.length; i++) {
+                int x = originX + (i * width / (workoutData.length - 1));
+                int y = originY - (workoutData[i] * height / max);
+                g.fillOval(x - 3, y - 3, 6, 6);
+                g.drawString(weekLabels[i], x - 10, originY + 15);
+                g.drawString(workoutData[i] + "회", x + 5, y - 5);
+                g.drawLine(prevX, prevY, x, y);
+                prevX = x;
+                prevY = y;
+            }
+        }
+    }
+
+    // 영양소 차트 패널
+    class NutritionChartPanel extends JPanel {
+        private int[] nutritionData = {0, 0, 0};
+
+        public void setNutritionData(int[] data) {
+            nutritionData = data;
+        }
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            String[] labels = {"탄수화물", "단백질", "지방"};
+            Color[] colors = {Color.YELLOW, Color.RED, Color.GREEN};
+
+            int width = getWidth();
+            int height = getHeight();
+            int radius = Math.min(width, height) / 4;
+            int centerX = width / 2;
+            int centerY = height / 2;
+
+            int sum = 0;
+            for (int value : nutritionData) sum += value;
+
+            int startAngle = 0;
+            for (int i = 0; i < nutritionData.length; i++) {
+                int arcAngle = (int) Math.round((double) nutritionData[i] / sum * 360);
+                g.setColor(colors[i]);
+                g.fillArc(centerX - radius, centerY - radius, radius * 2, radius * 2, startAngle, arcAngle);
+                startAngle += arcAngle;
+                g.setColor(Color.BLACK);
+                g.drawString(labels[i] + " (" + nutritionData[i] + "%)", centerX + radius + 10, centerY - radius + 20 + (i * 15));
+            }
+        }
+    }
 }
+
