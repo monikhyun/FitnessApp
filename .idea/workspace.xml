@@ -4,15 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="RecordPanel 기록Panel UI개선 및 운동별 이미지 폴더 추가">
-      <change afterPath="$PROJECT_DIR$/src/FitnessApp/images/바벨로우.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FitnessApp/images/시티드로우.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FitnessApp/images/인클라인 덤벨프레스.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/FitnessApp/images/인클라인 벤치프레스.png" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/CalenderPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/CalenderPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" afterDir="false" />
-    </list>
+    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="DB 업데이트" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -27,6 +19,13 @@
     &quot;assignee&quot;: &quot;monikhyun&quot;
   }
 }</component>
+  <component name="GithubProjectSettings">
+    <option name="branchProtectionPatterns">
+      <list>
+        <option value="main" />
+      </list>
+    </option>
+  </component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
     &quot;url&quot;: &quot;https://github.com/monikhyun/FitnessApp.git&quot;,
@@ -61,6 +60,17 @@
       <recent name="C:\Users\mih20\OneDrive\바탕 화면\과제물\FitnessApp\src\FitnessApp\src\com\example" />
     </key>
   </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="애플리케이션 수준" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="디폴트 작업">
@@ -86,21 +96,30 @@
       <option name="project" value="LOCAL" />
       <updated>1732711066284</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="DB 업데이트">
+      <option name="closed" value="true" />
+      <created>1733276919105</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1733276919105</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="데이터베이스 조회시간 지연문제 해결" />
     <MESSAGE value="RecordPanel 기록Panel UI개선 및 운동별 이미지 폴더 추가" />
-    <option name="LAST_COMMIT_MESSAGE" value="RecordPanel 기록Panel UI개선 및 운동별 이미지 폴더 추가" />
+    <MESSAGE value="DB 업데이트" />
+    <option name="LAST_COMMIT_MESSAGE" value="DB 업데이트" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java</url>
-          <line>697</line>
-          <properties class="com.example.MessageDialog" method="&lt;init&gt;">
+          <line>696</line>
+          <properties class="com.example.MessageDialog">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
