@@ -1,18 +1,24 @@
 package JavaProject;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.sql.*;
 
 public class PlayPanel extends JPanel {
 
     private String loginedid;
     private JPanel plantPanel, achievementPanel, achievementLatePanel, lateGraphPanel;
-    private ImageIcon plantIcon;
-    private JLabel plantLabel, achievementLabel, currentLabel, nextLabel;
+    private JLabel achievementLabel, currentLabel, nextLabel;
+    private BufferedImage plantImage;
+    private CustomImagePanel imagePanel;
     private int totalCom, currentCom, nextCom;
     private JButton update;
+    private static final int[] grow = {
+            0, 20, 50, 100, 200, 400, 500, 600, 1000, 2000, Integer.MAX_VALUE
+    };
 
     public PlayPanel(String loginedid, String loginedpass,Connection con) {
         this.loginedid = loginedid;
@@ -26,20 +32,38 @@ public class PlayPanel extends JPanel {
             e.printStackTrace();
         }
     }
+    // 이미지 사용을 위한 class
+    class CustomImagePanel extends JPanel {
+        private BufferedImage image;
 
+        // 이미지 설정 메서드
+        public void setImage(BufferedImage img) {
+            this.image = img;
+            repaint(); // 이미지를 다시 그리기
+        }
+
+        @Override
+        protected void paintComponent(Graphics g) {
+            super.paintComponent(g);
+            if (image != null) {
+                // 패널 크기에 맞게 이미지 그리기
+                g.drawImage(image, 0, 0, getWidth(), getHeight(), this);
+            }
+        }
+    }
     // 왼쪽 성장식물 패널
     private void initializeComponents(Connection con) throws SQLException {
         // 식물 패널 초기화
         plantPanel = new JPanel(new BorderLayout());
-        plantPanel.setBorder(BorderFactory.createTitledBorder("성장 Plant"));
-        plantLabel = new JLabel();
-        plantPanel.add(plantLabel);
         add(plantPanel);
+
+        // 식물 패널의 이미지 CustomPanel
+        imagePanel = new CustomImagePanel();
+        plantPanel.add(imagePanel, BorderLayout.CENTER);
 
         // 성과 패널 초기화
         achievementPanel = new JPanel();
         achievementPanel.setLayout(null);
-        achievementPanel.setBorder(BorderFactory.createTitledBorder("성장률"));
 
         add(achievementPanel);
 
@@ -49,10 +73,11 @@ public class PlayPanel extends JPanel {
         insertotalCom(con, totalCom);
         // 식물 등급 및 이미지 설정
         int grade = determineGrade(totalCom);
-        plantIcon = getPlantIcon(con, grade);
+        // DB에서 이미지 가져오기
+        plantImage = getPlantImage(con, grade);
         // null인지 검사
-        if (plantIcon != null) {
-            plantLabel.setIcon(plantIcon);
+        if (plantImage != null) {
+            imagePanel.setImage(plantImage);
         }
 
         // 현재 및 다음 Complement 설정
@@ -62,7 +87,7 @@ public class PlayPanel extends JPanel {
         // 성과 표시 패널 설정
         setupAchievementPanel(con);
     }
-
+    // totlaCom 값 계산
     private int calculateTotalComplet(Connection con) throws SQLException {
         String sumSql = "SELECT SUM(Complete) FROM UserExec WHERE Userid = ?";
         try (PreparedStatement ps = con.prepareStatement(sumSql)) {
@@ -84,33 +109,38 @@ public class PlayPanel extends JPanel {
             ps.setString(2, loginedid);
             ps.executeUpdate();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            JOptionPane.showMessageDialog(this, "데이터베이스 업데이트 오류"+e.getMessage());
         }
     }
 
     // 등급나누기
     private int determineGrade(int totalCom) {
-        if (totalCom <= 5) return 1;
-        else if (totalCom <= 10) return 2;
-        else if (totalCom <= 15) return 3;
-        return 4; // 50 이상일 경우
+        for(int i=1; i< grow.length; i++){
+            if (totalCom<=grow[i]){
+                return i;
+            }
+        }
+        return grow.length-1;
     }
 
     // 등급에 맞는 이미지 가져오기
-    private ImageIcon getPlantIcon(Connection con, int grade) throws SQLException {
-        String imageSql = "SELECT image FROM Play_images WHERE Grade = ?";
-
-        try (PreparedStatement ps = con.prepareStatement(imageSql)) {
+    private BufferedImage getPlantImage(Connection con,int grade) {
+        try {
+            String query = "SELECT image FROM Play_images WHERE Grade = ?";
+            PreparedStatement ps = con.prepareStatement(query);
             ps.setInt(1, grade);
 
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    String address = rs.getString("image");
-                    return new ImageIcon(address);
-                }
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                InputStream is = rs.getBinaryStream("image");
+                return ImageIO.read(is); // BLOB 데이터를 BufferedImage로 변환
             }
+            rs.close();
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return null;
+        return null; // 이미지가 없거나 오류 발생 시 null 반환
     }
 
     // 현재 Complete 총량 가져오기
@@ -128,12 +158,14 @@ public class PlayPanel extends JPanel {
         }
         return 0;
     }
-
+    // 현재 Complete 값에 따른 다음 목표치 반환
     private int getNextComplet(int currentCom) {
-        if (currentCom < 100) return 100;
-        if (currentCom < 500) return 500;
-        if (currentCom < 900) return 900;
-        return 1000; // 다음 단계가 없을 경우
+        for (int i=1; i<grow.length; i++){
+            if (currentCom <= grow[i]){
+                return grow[i];
+            }
+        }
+        return Integer.MAX_VALUE; // 최대 목표치를 넘겼을 경우
     }
 
     // 오른쪽 달성률 패널
@@ -154,9 +186,10 @@ public class PlayPanel extends JPanel {
         cando.setSize(150,100);
         cando.setForeground(Color.RED);
 
-        // 커스텀 그래프 패널 생성
+        // 커스텀 그래프 패널 생성 익명 클래스 사용
         lateGraphPanel = new JPanel() {
             @Override
+            // JPanel에 그래픽 그리는데 사용디는 메서드 사용자정의
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
 
@@ -165,6 +198,7 @@ public class PlayPanel extends JPanel {
 
                 // 배경 그리기
                 g.setColor(Color.LIGHT_GRAY);
+                //사각형을 채워서 그리는 기능 //현재 컴포넌트의 가로 세로 길이 가져옴
                 g.fillRect(0, 0, getWidth(), getHeight());
 
                 // 진행률 그래프 그리기 (파란색)
@@ -174,14 +208,15 @@ public class PlayPanel extends JPanel {
 
                 // 퍼센트 텍스트 추가
                 g.setColor(Color.BLACK);
+                // 지정된 위치에 문자열 그리기
                 g.drawString(String.format("%.1f%%", progress), 5, getHeight() - 10);
             }
         };
 
-        // 고정된 크기 대신 비율에 맞게 동적으로 크기 조정
+        // 크기 조정
         lateGraphPanel.setPreferredSize(new Dimension(300, 20));
 
-        // DB에서 바뀐 값 업데이트 버튼
+        // DB에서 바뀐 값에 대한 패널 업데이트 버튼
         update = new JButton("update");
         update.setBounds(325, 600,80,40);
         achievementPanel.add(update);
@@ -192,6 +227,14 @@ public class PlayPanel extends JPanel {
                 totalCom = calculateTotalComplet(con);
                 insertotalCom(con, totalCom);
 
+                // 식물 등급 및 이미지 설정
+                int grade = determineGrade(totalCom);
+                // DB에서 이미지 가져오기
+                plantImage = getPlantImage(con, grade);
+                // null인지 검사
+                if (plantImage != null) {
+                    imagePanel.setImage(plantImage);
+                }
                 // 현재,다음 Complete 계산
                 currentCom = getCurrentComplet(con);
                 nextCom = getNextComplet(currentCom);
