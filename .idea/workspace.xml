@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="DB 업데이트" />
+    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="DB 업데이트">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -104,7 +108,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733276919105</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="DB 업데이트">
+      <option name="closed" value="true" />
+      <created>1733277076949</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1733277076949</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -119,7 +131,7 @@
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java</url>
           <line>697</line>
-          <properties class="com.example.MessageDialog" method="&lt;init&gt;">
+          <properties class="com.example.MessageDialog">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>
