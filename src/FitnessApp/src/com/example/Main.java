@@ -168,7 +168,6 @@ class NewMember extends JFrame implements ActionListener{
     public void DBLogin (){
         try{
             conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123");
-
         } catch (SQLException e) {
             e.printStackTrace();
         }

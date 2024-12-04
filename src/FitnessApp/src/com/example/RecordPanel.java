@@ -6,6 +6,7 @@ import javax.xml.transform.Result;
 import java.awt.*;
 import java.awt.List;
 import java.awt.image.BufferedImage;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.List.*;
 import java.awt.event.*;
@@ -306,6 +307,7 @@ public class RecordPanel extends JPanel implements ActionListener {
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
+                System.out.println("이미지 있음");
                 InputStream is = rs.getBinaryStream("image");
                 return ImageIO.read(is); // BLOB 데이터를 BufferedImage로 변환
             }
