@@ -4,14 +4,15 @@ import javax.swing.*;
 import java.awt.*;
 import java.sql.*;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 
+import static java.util.Calendar.*;
 
 
 public class StatsPanel extends JPanel {
     private LocalDate currentMonth;
     private JLabel monthLabel;
+    private Calendar currentCalendar;
     private VolumeChartPanel volumePanel;
     private WorkoutChartPanel workoutPanel;
     private NutritionChartPanel nutritionPanel;
@@ -25,22 +26,22 @@ public class StatsPanel extends JPanel {
 
         setLayout(new BorderLayout());
 
-        // 현재 월 초기화
-        currentMonth = LocalDate.now().withDayOfMonth(1);
+        // 현재 날짜 초기화
+        currentCalendar = Calendar.getInstance();
 
         // 상단 패널
         JPanel topPanel = new JPanel();
         JButton prevButton = new JButton("<");
         JButton nextButton = new JButton(">");
-        monthLabel = new JLabel(formatMonth(currentMonth), SwingConstants.CENTER);
+        monthLabel = new JLabel("", SwingConstants.CENTER);
 
         prevButton.addActionListener(e -> {
-            currentMonth = currentMonth.minusMonths(1);
+            currentCalendar.add(MONTH, -1);
             updateMonth();
         });
 
         nextButton.addActionListener(e -> {
-            currentMonth = currentMonth.plusMonths(1);
+            currentCalendar.add(MONTH, 1);
             updateMonth();
         });
 
@@ -51,7 +52,7 @@ public class StatsPanel extends JPanel {
 
         // 중앙 패널
         JPanel mainPanel = new JPanel();
-        mainPanel.setLayout(null); // 레이아웃 매니저 해제
+        mainPanel.setLayout(null);
 
         volumePanel = new VolumeChartPanel();
         volumePanel.setBorder(BorderFactory.createTitledBorder("운동 볼륨 통계"));
@@ -71,30 +72,32 @@ public class StatsPanel extends JPanel {
         add(mainPanel, BorderLayout.CENTER);
 
         // 데이터 초기화
-        updatePanels(currentMonth.format(DateTimeFormatter.ofPattern("yyyy-MM")));
+        updateMonth();
     }
 
     private void updateMonth() {
-        monthLabel.setText(formatMonth(currentMonth));
-        String monthKey = currentMonth.format(DateTimeFormatter.ofPattern("yyyy-MM"));
-        updatePanels(monthKey);
-    }
-    private String formatMonth(LocalDate date) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 M월");
-        return date.format(formatter);
-    }
 
-    // 패널들 한번에 오류 처리
-    private void updatePanels(String month) {
+        int year = currentCalendar.get(YEAR);
+        int month = currentCalendar.get(MONTH) + 1;
+
+        // 년/월 레이블 업데이트
+        monthLabel.setText(String.format("%d년 %d월", year, month));
+
+        // 해당 월에 대한 데이터 패널 업데이트
+        String cureentMonth = String.format("%d-%02d", year, month); // yyyy-MM 형식으로 월 키 생성
+
         try {
-            int[] workoutData = loadWorkoutData(month);
-            int[] volumeData = loadVolumeData(month);
-            int[] nutritionData = loadNutritionData(month);
+            // 데이터베이스에서 가져온 운동량, 볼륨, 영양소 데이터
+            int[] workoutData = loadWorkoutData(cureentMonth);
+            int[] volumeData = loadVolumeData(cureentMonth);
+            int[] nutritionData = loadNutritionData(cureentMonth);
 
+            // 패널에 데이터 설정
             workoutPanel.setWorkoutData(workoutData);
             volumePanel.setVolumeData(volumeData);
             nutritionPanel.setNutritionData(nutritionData);
 
+            // 그래프를 새로 그림
             workoutPanel.repaint();
             volumePanel.repaint();
             nutritionPanel.repaint();
@@ -102,7 +105,12 @@ public class StatsPanel extends JPanel {
             e.printStackTrace();
             JOptionPane.showMessageDialog(this, "데이터를 가져오는 중 오류가 발생했습니다.", "오류", JOptionPane.ERROR_MESSAGE);
         }
+        // 화면 갱신
+        revalidate();
+        repaint();
     }
+
+
     // 운동 볼륨 데이터 가져오기
     private int[] loadVolumeData(String month) throws SQLException {
         String query = """
@@ -124,6 +132,7 @@ public class StatsPanel extends JPanel {
                 String category = rs.getString("Category");
                 int totalVolume = rs.getInt("total_volume");
 
+                // 각 부위에 맞게 총 볼륨을 계산
                 if (category.equals("Back")) {
                     volumeData[0] = totalVolume;
                 } else if (category.equals("Chest")) {
@@ -141,34 +150,32 @@ public class StatsPanel extends JPanel {
     }
     // 운동 횟수 데이터 가져오기
     private int[] loadWorkoutData(String month) throws SQLException {
+        // 같은 날짜에 중복된 운동 기록이 있더라도 한 날짜에 대해 하나의 RecordDate만 가져옴
         String query = """
-            SELECT RecordDate, COUNT(DISTINCT Execid) AS workout_days
+            SELECT DISTINCT RecordDate
             FROM UserExec 
             WHERE Userid = ? 
             AND DATE_FORMAT(RecordDate, '%Y-%m') = ? 
             AND Complete = 1
-            GROUP BY RecordDate
-            ORDER BY RecordDate
             """;
 
-        int[] workoutData = {0, 0, 0, 0};
+        int[] workoutData = {0, 0, 0, 0, 0}; // 최대 5주까지
 
         try (PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, loginedid);
-            stmt.setString(2, month);
+            stmt.setString(1, loginedid); // 첫번째 매개변수로 저장
+            stmt.setString(2, month);   // 두번째 매개변수로 저장
 
             ResultSet rs = stmt.executeQuery();
             while (rs.next()) {
                 Date recordDate = rs.getDate("RecordDate");
-                int workoutDays = rs.getInt("workout_days");
 
                 // 해당 날짜가 어느 주에 속하는지 구하기
-                Calendar calendar = Calendar.getInstance();
-                calendar.setTime(recordDate);
-                int weekOfMonth = calendar.get(Calendar.WEEK_OF_MONTH);
+                Calendar calendar = getInstance(); // 현재 날짜와 시간을 가져오는 메소드
+                calendar.setTime(recordDate);   // recordDate를 calendar 객체에 설정
+                int week = calendar.get(WEEK_OF_MONTH); // 해당 날짜가 해당 월의 몇 번째 주인지 반환
 
-                if (weekOfMonth >= 1 && weekOfMonth <= 4) {
-                    workoutData[weekOfMonth - 1] += workoutDays;
+                if (week >= 1 && week <= 5) {
+                    workoutData[week - 1] += 1; // 해당 주의 운동 횟수 증가
                 }
             }
         }
@@ -218,25 +225,32 @@ public class StatsPanel extends JPanel {
             int originX = 50;
             int originY = height + 20;
 
+            // X축
+            g.drawLine(originX, originY, width + 30, originY);
+
             // Y축
             g.drawLine(originX, originY, originX, 30);
             g.drawString("볼륨 (kg)", originX - 45, 30);
 
-            // X축
-            g.drawLine(originX, originY, width + 10, originY);
+            // 막대 그래프 그리기
+            int barWidth = (width - 20) / volumeData.length;  // 각 막대의 너비 계산 (그래프 영역 너비를 데이터 개수로 나누기)
 
-            // 막대 그래프
-            int barWidth = (width - 20) / volumeData.length;
             for (int i = 0; i < volumeData.length; i++) {
+                // 막대의 높이 계산 (현재 데이터 값에 비례하여 화면에 비율로 그리기)
                 int barHeight = volumeData[i] * height / max;
-                int x = originX + (i * barWidth) + 10;
-                int y = originY - barHeight;
+
+                // 각 막대의 X, Y 좌표 계산
+                int x = originX + (i * barWidth) + 10;  // X좌표: 원점에서 막대의 순번에 맞게 위치 이동
+                int y = originY - barHeight;  // Y좌표: 원점에서 막대 높이만큼 위로 이동
+
+                // 막대를 채우기
                 g.setColor(new Color(97, 155, 250));
                 g.fillRect(x, y, barWidth - 10, barHeight);
-                g.setColor(Color.BLACK);
-                g.drawString(labels[i], x + 5, originY + 15);
-                g.drawString(volumeData[i] + " kg", x + 5, y - 5);
 
+                // 상세 데이터 표시
+                g.setColor(Color.BLACK);
+                g.drawString(labels[i], x + 5, originY + 15);  // 각 막대의 부위 표시
+                g.drawString(volumeData[i] + " kg", x + 5, y - 5);  // 각 막대의 높이에 맞게 볼륨 표시
             }
         }
     }
@@ -251,30 +265,36 @@ public class StatsPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
-            String[] weekLabels = {"첫째 주", "둘째 주", "셋째 주", "넷째 주"};
-            int max = 31;
+            String[] weekLabels = {"첫째 주", "둘째 주", "셋째 주", "넷째 주", "다섯째 주"};
+            int max = 7;
 
             int width = getWidth() - 100;
             int height = getHeight() - 50;
             int originX = 50;
             int originY = height + 20 ;
 
+            // X축
+            g.drawLine(originX, originY, width + 10, originY);
             // Y축
             g.drawLine(originX, originY, originX, 30);
             g.drawString("운동 횟수", originX - 45, 30);
 
-            // X축
-            g.drawLine(originX, originY, width + 10, originY);
-
             // 데이터 표시
+            // 이전 X, Y 좌표 초기화
             int prevX = originX, prevY = originY - (workoutData[0] * height / max);
+
             for (int i = 0; i < workoutData.length; i++) {
+                // X 좌표를 계산: 각 주별로 일정 간격을 두고 그리기 위해 width를 workoutData.length-1로 나눔
                 int x = originX + (i * width / (workoutData.length - 1));
+                // Y 좌표를 계산: 운동 횟수를 최대값을 기준으로 그래프의 높이에 맞게 비율로 계산
                 int y = originY - (workoutData[i] * height / max);
-                g.fillOval(x - 3, y - 3, 6, 6);
-                g.drawString(weekLabels[i], x - 10, originY + 15);
-                g.drawString(workoutData[i] + "회", x + 5, y - 5);
-                g.drawLine(prevX, prevY, x, y);
+
+                g.fillOval(x - 3, y - 3, 6, 6); // 각 데이터 포인트에 작은 원을 그려 점처럼 표시
+                g.drawString(weekLabels[i], x - 20, originY + 15); // X축에 몇째 주인지 표시
+                g.drawString(workoutData[i] + "회", x + 5, y - 5); // 운동 횟수를 점 위에 표시
+                g.drawLine(prevX, prevY, x, y);  // 이전 점과 현재 점을 이어주는 선
+
+                // 현재 점 업데이트
                 prevX = x;
                 prevY = y;
             }
@@ -291,27 +311,45 @@ public class StatsPanel extends JPanel {
         @Override
         protected void paintComponent(Graphics g) {
             super.paintComponent(g);
+
             String[] labels = {"탄수화물", "단백질", "지방"};
             Color[] colors = {Color.YELLOW, Color.RED, Color.GREEN};
 
+            // 그래프 중심 및 크기 설정
             int width = getWidth();
             int height = getHeight();
             int radius = Math.min(width, height) / 4;
             int centerX = width / 2;
             int centerY = height / 2;
 
+            // 각 영양소 합계 비율 계산
             int sum = 0;
             for (int value : nutritionData) sum += value;
 
+            // 총합 퍼센트가 100%가 되도록 계산
+            double[] percentages = new double[nutritionData.length];
+            for (int i = 0; i < nutritionData.length; i++) {
+                percentages[i] = sum == 0 ? 0 : (nutritionData[i] * 100.0 / sum); // 퍼센트 값 계산
+            }
+
+            // 원 그래프 그리기
             int startAngle = 0;
             for (int i = 0; i < nutritionData.length; i++) {
-                int arcAngle = (int) Math.round((double) nutritionData[i] / sum * 360);
+                int arcAngle = (int) Math.round(percentages[i] * 360 / 100); // 각도 계산
                 g.setColor(colors[i]);
                 g.fillArc(centerX - radius, centerY - radius, radius * 2, radius * 2, startAngle, arcAngle);
                 startAngle += arcAngle;
+
+                // 영양소 비율 출력
                 g.setColor(Color.BLACK);
-                g.drawString(labels[i] + " (" + nutritionData[i] + "%)", centerX + radius + 10, centerY - radius + 20 + (i * 15));
+                g.drawString(labels[i] + " (" + String.format("%.1f", percentages[i]) + "%)",
+                        centerX + radius + 10, centerY - radius + 20 + (i * 15));
             }
+            // 적정 영양소 비율 출력
+            g.setColor(Color.PINK);
+            g.drawString("적정 탄수화물 비율: 50~60%", centerX + radius + 10, centerY + 50);
+            g.drawString("적정 단백질 비율: 25~35%", centerX + radius + 10, centerY + 65);
+            g.drawString("적정 지방 비율: 15~25%", centerX + radius + 10, centerY + 80);
         }
     }
 }
