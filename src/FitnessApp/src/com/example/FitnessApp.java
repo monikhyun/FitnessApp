@@ -28,7 +28,7 @@ public class FitnessApp extends JFrame {
         // 각 화면 패널 추가
         tabbedPane.addTab("Calendar", new CalendarPanel(loginedid,loginedpass, conn));
         tabbedPane.addTab("Record", new RecordPanel(loginedid, loginedpass,conn));
-        tabbedPane.addTab("Stats", new StatsPanel(loginedid, conn));
+        tabbedPane.addTab("Stats", new StatsPanel(loginedid, loginedpass,conn));
         tabbedPane.addTab("Diet", new JPanel());
         tabbedPane.addTab("Play", new PlayPanel(loginedid, loginedpass, conn)); // Play 화면은 아직 미구현
         tabbedPane.addTab("User", new UserPanel());

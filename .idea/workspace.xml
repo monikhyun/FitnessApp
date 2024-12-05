@@ -4,12 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="Calendar 과 Stats 병합">
+    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="Calendar 과 Stats 병합 후 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/FitnessApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/FitnessApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/PlayPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/PlayPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/StatsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/StatsPanel.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/User.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -144,7 +142,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733373026652</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Calendar 과 Stats 병합 후 수정">
+      <option name="closed" value="true" />
+      <created>1733374174351</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1733374174351</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -164,7 +170,8 @@
     <MESSAGE value="DB 업데이트" />
     <MESSAGE value="DB 업데이트 최종" />
     <MESSAGE value="Calendar 과 Stats 병합" />
-    <option name="LAST_COMMIT_MESSAGE" value="Calendar 과 Stats 병합" />
+    <MESSAGE value="Calendar 과 Stats 병합 후 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="Calendar 과 Stats 병합 후 수정" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
