@@ -209,7 +209,7 @@ public class StatsPanel extends JPanel {
 
     // 부위별 볼륨 차트 패널
     class VolumeChartPanel extends JPanel {
-        private int[] volumeData = {0, 0, 0, 0};
+        private int[] volumeData = {0, 0, 0, 0, 0};
 
         public void setVolumeData(int[] data) {
             volumeData = data;
@@ -226,7 +226,7 @@ public class StatsPanel extends JPanel {
             int originY = height + 20;
 
             // X축
-            g.drawLine(originX, originY, width + 30, originY);
+            g.drawLine(originX, originY, originX +width, originY);
 
             // Y축
             g.drawLine(originX, originY, originX, 30);
