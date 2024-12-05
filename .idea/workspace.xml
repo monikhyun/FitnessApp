@@ -4,10 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="DB 업데이트">
+    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="DB 업데이트 최종">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,20 +42,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;calendar&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/mih20/OneDrive/바탕 화면/과제물/FitnessApp/src/FitnessApp/images&quot;,
-    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/mih20/OneDrive/바탕 화면/과제물/FitnessApp/src/untitled/src/Main.java&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;모듈&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;애플리케이션.Main.executor&quot;: &quot;Run&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "calendar",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/mih20/OneDrive/바탕 화면/과제물/FitnessApp/src/FitnessApp/images",
+    "onboarding.tips.debug.path": "C:/Users/mih20/OneDrive/바탕 화면/과제물/FitnessApp/src/untitled/src/Main.java",
+    "project.structure.last.edited": "모듈",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
+    "애플리케이션.Main.executor": "Run"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\mih20\OneDrive\바탕 화면\과제물\FitnessApp\src\FitnessApp\images" />
@@ -124,21 +123,30 @@
       <option name="project" value="LOCAL" />
       <updated>1733278126625</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="DB 업데이트 최종">
+      <option name="closed" value="true" />
+      <created>1733278940872</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1733278940872</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="데이터베이스 조회시간 지연문제 해결" />
     <MESSAGE value="RecordPanel 기록Panel UI개선 및 운동별 이미지 폴더 추가" />
     <MESSAGE value="DB 업데이트" />
-    <option name="LAST_COMMIT_MESSAGE" value="DB 업데이트" />
+    <MESSAGE value="DB 업데이트 최종" />
+    <option name="LAST_COMMIT_MESSAGE" value="DB 업데이트 최종" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java</url>
-          <line>729</line>
+          <line>696</line>
           <properties class="com.example.MessageDialog">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
