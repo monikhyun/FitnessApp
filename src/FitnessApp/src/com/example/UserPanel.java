@@ -9,10 +9,12 @@ class UserPanel extends JPanel {
     private JTextField nameField, ageField, heightField, weightField;
     private JComboBox<String> genderCombo, goalCombo;
     private String userId, userPasswd;
+    private  Connection conn;
 
-    public UserPanel(String userId, String userPasswd) {
+    public UserPanel(String userId, String userPasswd, Connection conn) {
         this.userId = userId;
         this.userPasswd = userPasswd;
+        this.conn = conn;
 
         setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -69,9 +71,8 @@ class UserPanel extends JPanel {
     // 데이터베이스에서 사용자 정보 로드
     private void loadUserInfo() {
         String query = "SELECT * FROM User WHERE Userid = ?";
-        try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123");
-             PreparedStatement statement = connection.prepareStatement(query)) {
+        try (
+             PreparedStatement statement = conn.prepareStatement(query)) {
 
             statement.setString(1, userId);
             ResultSet resultSet = statement.executeQuery();
@@ -100,9 +101,8 @@ class UserPanel extends JPanel {
         String goalType = (String) goalCombo.getSelectedItem();
 
         String query = "UPDATE User SET Username = ?, Age = ?, Gender = ?, Height = ?, Weight = ?, GoalType = ? WHERE Userid = ?";
-        try (Connection connection = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123");
-             PreparedStatement statement = connection.prepareStatement(query)) {
+        try (
+             PreparedStatement statement = conn.prepareStatement(query)) {
 
             statement.setString(1, nameField.getText());
             statement.setInt(2, Integer.parseInt(ageField.getText()));

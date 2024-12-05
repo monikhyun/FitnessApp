@@ -24,11 +24,12 @@ class DietPanel extends JPanel {
     private Calendar calendar = Calendar.getInstance(); 
     private String loginedid; // 로그인한 사용자 ID
     private String loginedpass; // 로그인한 사용자 비밀번호
-
+    private Connection conn;
     
-    public DietPanel(String loginedid, String loginedpass) {
+    public DietPanel(String loginedid, String loginedpass, Connection conn) {
         this.loginedid = loginedid;
         this.loginedpass = loginedpass;
+        this.conn = conn;
         setLayout(new BorderLayout()); 
 
         initializePanels();
@@ -222,9 +223,7 @@ class DietPanel extends JPanel {
         String query = "SELECT TimeCategory, FoodName, TotalCalories " +
                        "FROM Userdiet " +
                        "WHERE UserId = ? AND Date = ?";
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp",
-                "mih", "ansxoddl123");
+        try(
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setString(1, userId); // 사용자 ID 설정
@@ -248,9 +247,7 @@ class DietPanel extends JPanel {
     private void addFoodToUserDiet(String userId, String foodname, String date, String timeCategory, double totalCalories, int count) {
         String query = "INSERT INTO Userdiet (UserId, FoodName, Date, TimeCategory, Count, TotalCalories) VALUES (?, ?, ?, ?, ?, ?)";
 
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp",
-                "mih", "ansxoddl123");
+        try (
              PreparedStatement pstmt = conn.prepareStatement(query)) {
 
             pstmt.setString(1, userId); 
@@ -366,9 +363,7 @@ class DietPanel extends JPanel {
     private void deleteUserFoodData(String userId, String date) {
         String query = "DELETE FROM Userdiet WHERE UserId = ? AND Date = ?"; // 쿼리
 
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp",
-                "mih", "ansxoddl123");
+        try (
              PreparedStatement pstmt = conn.prepareStatement(query)) {
             
             pstmt.setString(1, userId);
@@ -397,9 +392,7 @@ class DietPanel extends JPanel {
         String userGoalType = fetchUserGoalType(loginedid); // 사용자 GoalType 가져오기
         String query = "SELECT Foodname, Category, Carbo, Protein, Fat, Kcal FROM Diet WHERE GoalType = ? ORDER BY RAND() LIMIT 4"; // GoalType에 맞춰 랜덤 추천
         
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp",
-                "mih", "ansxoddl123");
+        try (
              PreparedStatement pstmt = conn.prepareStatement(query)) {
              
             pstmt.setString(1, userGoalType); 
@@ -425,9 +418,7 @@ class DietPanel extends JPanel {
         String goalType = null;
         String query = "SELECT GoalType FROM User WHERE UserId = ?";
 
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp",
-                "mih", "ansxoddl123");
+        try (
              PreparedStatement pstmt = conn.prepareStatement(query)) {
              
             pstmt.setString(1, userId); 
@@ -447,9 +438,7 @@ class DietPanel extends JPanel {
         Vector<Vector<String>> foodData = new Vector<>();
         String query = "SELECT Foodname, Category, Carbo, Protein, Fat, Kcal FROM Diet WHERE Foodname LIKE ?"; // 검색 쿼리
         
-        try (Connection conn = DriverManager.getConnection(
-                "jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp",
-                "mih", "ansxoddl123");
+        try (
              PreparedStatement pstmt = conn.prepareStatement(query)) {
              
             pstmt.setString(1, "%" + keyword + "%"); 

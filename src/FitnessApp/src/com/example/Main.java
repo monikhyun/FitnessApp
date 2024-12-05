@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import com.formdev.flatlaf.FlatLightLaf;
 
 class Login extends JFrame implements ActionListener{
     JTextField id;
@@ -163,18 +164,13 @@ class NewMember extends JFrame implements ActionListener{
     private JComboBox<String> comboBox;
     private boolean idChecked = false;
 
-    Connection conn;
+    private Connection conn;
 
-    public void DBLogin (){
-        try{
-            conn = DriverManager.getConnection("jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp", "mih", "ansxoddl123");
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+
+
     NewMember(String title, Connection conn){
         setTitle(title);
-        DBLogin();
+        this.conn = conn;
         Container ct = getContentPane();
         ct.setLayout(new BorderLayout(0, 20));
 
@@ -336,6 +332,11 @@ class NewMember extends JFrame implements ActionListener{
             pstmtUKey.setInt(2, comboBox.getSelectedIndex()); // Keyqusid
             pstmtUKey.setString(3, answer.getText().trim()); // Keyanswer
             pstmtUKey.executeUpdate();
+
+            String compledb = "INSERT INTO forComplete(Userid, totalCom) VALUES (?,?)";
+            PreparedStatement pscom = conn.prepareStatement(compledb);
+            pscom.setString(1, id.getText().trim());
+            pscom.setInt(2,0);
 
             JOptionPane.showMessageDialog(this, "회원가입을 완료하였습니다.!", "회원가입 성공", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
@@ -718,12 +719,24 @@ class MessageDialog extends JDialog implements ActionListener{
 }
 public class Main {
     public static void main(String[] args) {
-        Login win = new Login("로그인");
-        win.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        win.setSize(350, 300);
-        win.setLocation(100, 200);
-        win.setVisible(true);
+        try {
+            // FlatLaf 룩앤필 설정
+            FlatLightLaf.setup();
+            // 또는 아래와 같이 UIManager에 직접 설정
+            // UIManager.setLookAndFeel(new FlatLightLaf());
+        } catch (Exception ex) {
+            System.err.println("Failed to initialize FlatLaf");
+            ex.printStackTrace();
+        }
 
+        // Login 창 띄우기
+        SwingUtilities.invokeLater(() -> {
+            Login win = new Login("로그인");
+            win.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            win.setSize(350, 300);
+            win.setLocation(100, 200);
+            win.setVisible(true);
+        });
     }
 
 
