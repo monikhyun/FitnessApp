@@ -4,8 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="DB 업데이트 최종">
+    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="Calendar 과 Stats 병합">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/FitnessApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/FitnessApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/PlayPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/PlayPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/StatsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/StatsPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/User.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -47,6 +51,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "git-widget-placeholder": "calendar",
+    "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/mih20/OneDrive/바탕 화면/과제물/FitnessApp/src/FitnessApp/images",
     "onboarding.tips.debug.path": "C:/Users/mih20/OneDrive/바탕 화면/과제물/FitnessApp/src/untitled/src/Main.java",
@@ -131,15 +136,35 @@
       <option name="project" value="LOCAL" />
       <updated>1733278940872</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Calendar 과 Stats 병합">
+      <option name="closed" value="true" />
+      <created>1733373026652</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1733373026652</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="데이터베이스 조회시간 지연문제 해결" />
     <MESSAGE value="RecordPanel 기록Panel UI개선 및 운동별 이미지 폴더 추가" />
     <MESSAGE value="DB 업데이트" />
     <MESSAGE value="DB 업데이트 최종" />
-    <option name="LAST_COMMIT_MESSAGE" value="DB 업데이트 최종" />
+    <MESSAGE value="Calendar 과 Stats 병합" />
+    <option name="LAST_COMMIT_MESSAGE" value="Calendar 과 Stats 병합" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

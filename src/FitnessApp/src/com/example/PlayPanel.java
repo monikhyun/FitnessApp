@@ -1,4 +1,4 @@
-package JavaProject;
+package com.example;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
