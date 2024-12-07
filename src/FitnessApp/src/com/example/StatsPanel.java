@@ -1,4 +1,4 @@
-package com.example;
+package JavaProject;
 
 import javax.swing.*;
 import java.awt.*;
@@ -75,7 +75,7 @@ public class StatsPanel extends JPanel {
         updateMonth();
     }
 
-    private void updateMonth() {
+    protected void updateMonth() {
 
         int year = currentCalendar.get(YEAR);
         int month = currentCalendar.get(MONTH) + 1;

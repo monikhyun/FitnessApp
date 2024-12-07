@@ -1,4 +1,4 @@
-package com.example;
+package JavaProject;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -29,7 +29,6 @@ class UserPanel extends JPanel {
         formPanel.add(new JLabel("나이:"));
         ageField = new JTextField();
         formPanel.add(ageField);
-
         formPanel.add(new JLabel("성별:"));
         genderCombo = new JComboBox<>(new String[]{"남", "여"});
         formPanel.add(genderCombo);
