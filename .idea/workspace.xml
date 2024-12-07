@@ -4,9 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="LAF 라이브러리 파일 추가">
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/User.java" beforeDir="false" />
+    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="파일 정리">
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/flatlaf_3_5_2.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/libraries/mysql_connector_j_9_1_0.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/CalenderPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/CalenderPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/FitnessApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/FitnessApp.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -48,7 +53,7 @@
     "git-widget-placeholder": "main",
     "ignore.virus.scanning.warn.message": "true",
     "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/mih20/OneDrive/바탕 화면/프로젝트용/flatlaf-3.5.2.jar",
+    "last_opened_file_path": "C:/Users/mih20/OneDrive/바탕 화면/mysql-connector-j-9.1.0/mysql-connector-j-9.1.0.jar",
     "onboarding.tips.debug.path": "C:/Users/mih20/OneDrive/바탕 화면/과제물/FitnessApp/src/untitled1/src/Main.java",
     "project.structure.last.edited": "라이브러리",
     "project.structure.proportion": "0.15",
@@ -64,6 +69,21 @@
     </key>
   </component>
   <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="ALTERNATIVE_JRE_PATH" value="23" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="com.example.Main" />
+      <module name="FitnessApp" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.example.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <configuration default="true" type="JetRunConfigurationType">
       <method v="2">
         <option name="Make" enabled="true" />
@@ -171,7 +191,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733385023552</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="파일 정리">
+      <option name="closed" value="true" />
+      <created>1733385163277</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1733385163277</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -195,15 +223,16 @@
     <MESSAGE value="Calendar 과 Stats 병합 후 수정 3" />
     <MESSAGE value="UI 디자인 update 및 연결" />
     <MESSAGE value="LAF 라이브러리 파일 추가" />
-    <option name="LAST_COMMIT_MESSAGE" value="LAF 라이브러리 파일 추가" />
+    <MESSAGE value="파일 정리" />
+    <option name="LAST_COMMIT_MESSAGE" value="파일 정리" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java</url>
-          <line>697</line>
-          <properties class="com.example.MessageDialog">
+          <line>700</line>
+          <properties class="com.example.FindPassword">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />
           </properties>

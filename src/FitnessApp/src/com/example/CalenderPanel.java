@@ -22,13 +22,15 @@ class CalendarPanel extends JPanel {
     private static final String dburl = "jdbc:mysql://fitnessapp.c9uc026my60b.us-east-1.rds.amazonaws.com:3306/fitnessapp";
     private static final String dbusr = "mih";
     private static final String dbpass = "ansxoddl123";
+    private RecordPanel recordPanel;
 
     Connection conn;
 
 
-    public CalendarPanel(String loginedid, String loginedpass, Connection conn) {
+    public CalendarPanel(String loginedid, String loginedpass, Connection conn, RecordPanel recordPanel) {
         this.loginedid = loginedid;
         this.loginedpass = loginedpass;
+        this.recordPanel = recordPanel;
         this.conn = conn;
 
         setLayout(new GridLayout(1, 2));  // 1행 2열의 그리드 레이아웃
@@ -279,7 +281,7 @@ class CalendarPanel extends JPanel {
                 pst.setDate(3, sqlDate);
 
                 pst.executeUpdate();
-
+                recordPanel.updateDateLabel();
                 JOptionPane.showMessageDialog(this, "운동이 추가되었습니다.", "성공", JOptionPane.INFORMATION_MESSAGE);
             }
 

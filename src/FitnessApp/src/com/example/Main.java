@@ -91,6 +91,9 @@ class Login extends JFrame implements ActionListener{
                 app.setVisible(true);
                 this.dispose();
             }
+            else{
+                JOptionPane.showMessageDialog(this, "로그인에 실패했습니다.", "로그인 실패", JOptionPane.ERROR_MESSAGE);
+            }
         }
         else if(s.equals("취소")) {
             id.setText("");
