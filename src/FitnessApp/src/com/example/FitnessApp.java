@@ -1,4 +1,4 @@
-package com.example;
+package JavaProject;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -27,12 +27,14 @@ public class FitnessApp extends JFrame {
         // jTabbedPane.addTab("회원", new JPanel());
         JTabbedPane tabbedPane = new JTabbedPane();
 
-        RecordPanel recordPanel = new RecordPanel(loginedid, loginedpass,conn);
+        StatsPanel statsPanel = new StatsPanel(loginedid, loginedpass,conn);
+        RecordPanel recordPanel = new RecordPanel(loginedid, loginedpass,conn, statsPanel);
+
         // 각 화면 패널 추가
         tabbedPane.addTab("Calendar", new CalendarPanel(loginedid,loginedpass, conn, recordPanel));
         tabbedPane.addTab("Record", recordPanel);
-        tabbedPane.addTab("Stats", new StatsPanel(loginedid, loginedpass,conn));
-        tabbedPane.addTab("Diet", new DietPanel(loginedid, loginedpass, conn));
+        tabbedPane.addTab("Stats", statsPanel);
+        tabbedPane.addTab("Diet", new DietPanel(loginedid, loginedpass, conn, statsPanel));
         tabbedPane.addTab("Play", new PlayPanel(loginedid, loginedpass, conn)); // Play 화면은 아직 미구현
         tabbedPane.addTab("User", new UserPanel(loginedid, loginedpass, conn));
 

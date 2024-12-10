@@ -1,4 +1,4 @@
-package com.example;
+package JavaProject;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -25,11 +25,15 @@ class DietPanel extends JPanel {
     private String loginedid; // 로그인한 사용자 ID
     private String loginedpass; // 로그인한 사용자 비밀번호
     private Connection conn;
-    
-    public DietPanel(String loginedid, String loginedpass, Connection conn) {
+
+    // for 초기값
+    private StatsPanel statsPanel;
+    public DietPanel(String loginedid, String loginedpass, Connection conn, StatsPanel statsPanel) {
         this.loginedid = loginedid;
         this.loginedpass = loginedpass;
         this.conn = conn;
+        this.statsPanel = statsPanel;
+
         setLayout(new BorderLayout()); 
 
         initializePanels();
@@ -287,6 +291,7 @@ class DietPanel extends JPanel {
 
                                 String currentDate = getCurrentDateString(); // 현재 날짜 가져오기
                                 addMealToUserDiet(foodName, foodKcal, currentDate, count); // 음식 추가 메소드 호출
+                                statsPanel.updateMonth(); // 날짜 업뎃
                             } else {
                                 JOptionPane.showMessageDialog(null, "수량은 1 이상이어야 합니다.", "오류", JOptionPane.ERROR_MESSAGE); // 오류 메시지
                             }

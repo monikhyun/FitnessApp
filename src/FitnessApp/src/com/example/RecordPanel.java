@@ -30,17 +30,19 @@ public class RecordPanel extends JPanel implements ActionListener {
     private ArrayList<JPanel>[][] execPanels = new ArrayList[5][366];// 운동 패널 리스트
     private java.util.List<String> execlist = new java.util.ArrayList<>(); // 운동 목록
 
-
+    private StatsPanel statsPanel;
     // 각 버튼에 해당하는 패널 리스트 선언
     java.util.List<JPanel> panels = new java.util.ArrayList<>();
     Connection conn;
 
 
 
-    public RecordPanel(String id, String passwd, Connection conn) { //Record 패널 생성자
+    public RecordPanel(String id, String passwd, Connection conn,StatsPanel statsPanel) { //Record 패널 생성자
         this.loginedid = id; // Main에서 받아온 유저아이디
         this.loginedpass = passwd; // Main에서 받아온 비밀번호
         this.conn = conn; // MySQL을 활용하기 위한 Main에서 나온 Connection 객체
+        this.statsPanel = statsPanel; // for 초기값
+
 
         try {
             String execid = "SELECT Execid ,Execname FROM Exec ORDER BY Execid ASC"; // 운동테이블에서 운동목록 조회
@@ -715,6 +717,8 @@ public class RecordPanel extends JPanel implements ActionListener {
 
 
                     JOptionPane.showMessageDialog(null, "운동기록 성공", "성공", JOptionPane.INFORMATION_MESSAGE);
+
+                    statsPanel.updateMonth(); // stats 날짜 업뎃
 
                 } catch (SQLException ex) {
                     ex.printStackTrace();

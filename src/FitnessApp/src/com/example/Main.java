@@ -1,4 +1,4 @@
-package com.example;
+package JavaProject;
 
 import javax.swing.*;
 import javax.swing.event.DocumentEvent;
@@ -6,8 +6,6 @@ import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileInputStream;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -340,6 +338,7 @@ class NewMember extends JFrame implements ActionListener{
             PreparedStatement pscom = conn.prepareStatement(compledb);
             pscom.setString(1, id.getText().trim());
             pscom.setInt(2,0);
+            pscom.executeUpdate();
 
             JOptionPane.showMessageDialog(this, "회원가입을 완료하였습니다.!", "회원가입 성공", JOptionPane.INFORMATION_MESSAGE);
             this.dispose();
