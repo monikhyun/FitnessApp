@@ -4,13 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="파일 정리">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/flatlaf_3_5_2.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/mysql_connector_j_9_1_0.xml" beforeDir="false" />
+    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="발생 오류 수정">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/CalenderPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/CalenderPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/FitnessApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/FitnessApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -46,22 +42,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "C:/Users/mih20/OneDrive/바탕 화면/mysql-connector-j-9.1.0/mysql-connector-j-9.1.0.jar",
-    "onboarding.tips.debug.path": "C:/Users/mih20/OneDrive/바탕 화면/과제물/FitnessApp/src/untitled1/src/Main.java",
-    "project.structure.last.edited": "라이브러리",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "project.propVCSSupport.DirectoryMappings",
-    "애플리케이션.Main.executor": "Run"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/mih20/OneDrive/바탕 화면/mysql-connector-j-9.1.0/mysql-connector-j-9.1.0.jar&quot;,
+    &quot;onboarding.tips.debug.path&quot;: &quot;C:/Users/mih20/OneDrive/바탕 화면/과제물/FitnessApp/src/untitled1/src/Main.java&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;라이브러리&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.DirectoryMappings&quot;,
+    &quot;애플리케이션.Main.executor&quot;: &quot;Run&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Users\mih20\OneDrive\바탕 화면\과제물\FitnessApp\src\FitnessApp\images" />
@@ -199,7 +195,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733385163277</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="발생 오류 수정">
+      <option name="closed" value="true" />
+      <created>1733531102498</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1733531102498</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -224,7 +228,8 @@
     <MESSAGE value="UI 디자인 update 및 연결" />
     <MESSAGE value="LAF 라이브러리 파일 추가" />
     <MESSAGE value="파일 정리" />
-    <option name="LAST_COMMIT_MESSAGE" value="파일 정리" />
+    <MESSAGE value="발생 오류 수정" />
+    <option name="LAST_COMMIT_MESSAGE" value="발생 오류 수정" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

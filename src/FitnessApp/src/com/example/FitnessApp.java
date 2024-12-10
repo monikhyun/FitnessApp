@@ -1,6 +1,8 @@
 package com.example;
 
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -36,6 +38,15 @@ public class FitnessApp extends JFrame {
 
         // 탭 패널을 프레임에 추가
         add(tabbedPane, BorderLayout.CENTER);
+
+        tabbedPane.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                if(tabbedPane.getSelectedIndex()==1){
+                    recordPanel.updateDateLabel();
+                }
+            }
+        });
 
     }
 

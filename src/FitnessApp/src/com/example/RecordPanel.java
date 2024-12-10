@@ -28,7 +28,7 @@ public class RecordPanel extends JPanel implements ActionListener {
     private JPanel panel = new JPanel(new BorderLayout()); //
     private ArrayList<JButton>[][] execbuttons = new ArrayList[5][366]; // 운동 버튼 리스트
     private ArrayList<JPanel>[][] execPanels = new ArrayList[5][366];// 운동 패널 리스트
-    private java.util.List<String> execlist = new java.util.ArrayList<>();
+    private java.util.List<String> execlist = new java.util.ArrayList<>(); // 운동 목록
 
 
     // 각 버튼에 해당하는 패널 리스트 선언
@@ -388,6 +388,12 @@ public class RecordPanel extends JPanel implements ActionListener {
         execdetail.setBackground(Color.WHITE);
         execdetail.setPreferredSize(new Dimension(800, 1000)); // 초기 크기 설정
 
+        JButton delbtn = new JButton("삭제");
+        delbtn.setBounds(80,30,70,50);
+        delbtn.setBackground(Color.red);
+
+        execdetail.add(delbtn);
+
         // 데이터베이스에 기록을 저장하기 위한 확인 버튼
         JButton okbtn = new JButton("확인");
         okbtn.setBackground(Color.white);
@@ -643,53 +649,55 @@ public class RecordPanel extends JPanel implements ActionListener {
                         ps.executeUpdate();
                     }
 
-                    // 기록시에 UserExec 테이블에 해당 운동 완료 값과 TotalCal, TotalVol 값 업데이트
-                    String complete = "UPDATE UserExec SET Complete = ?, Totalcalories = ?, Totalvolume = ? WHERE RecordDate = DATE(?) AND Execid = ? AND Userid = ?";
 
-                    // 총 칼로리 계산을 위한 totalset 가져오기
-                    String totalset = "SELECT COUNT(SetCount) FROM ExecRecord WHERE ExecDate =DATE(?) AND Execid = ? AND Userid = ?";
-                    // 해당 유저의 몸무게 가져오기
-                    String weight = "SELECT Weight FROM User WHERE Userid = ?";
-                    // 각 운동별 기본 소모 칼로리 가져오기
-                    String cal = "SELECT Calories FROM Exec WHERE Execid = ?";
+                        // 기록시에 UserExec 테이블에 해당 운동 완료 값과 TotalCal, TotalVol 값 업데이트
+                        String complete = "UPDATE UserExec SET Complete = ?, Totalcalories = ?, Totalvolume = ? WHERE RecordDate = DATE(?) AND Execid = ? AND Userid = ?";
+                        int setnum = 1, weightnum = 1, calnum = 1;
+                        int i = execlist.indexOf(execname);
+                            try{
+                            // 총 칼로리 계산을 위한 totalset 가져오기
+                             String totalset = "SELECT COUNT(SetCount) FROM ExecRecord WHERE ExecDate =DATE(?) AND Execid = ? AND Userid = ?";
+                            // 해당 유저의 몸무게 가져오기
+                            String weight = "SELECT Weight FROM User WHERE Userid = ?";
+                             // 각 운동별 기본 소모 칼로리 가져오기
+                            String cal = "SELECT Calories FROM Exec WHERE Execid = ?";
+
+
+                            PreparedStatement setps = conn.prepareStatement(totalset);
+
+                            setps.setDate(1, Date.valueOf(dateLabel.getText()));
+                            setps.setInt(2, i + 1);
+                            setps.setString(3, loginedid);
+
+                            PreparedStatement weightps = conn.prepareStatement(weight);
+
+                            weightps.setString(1, loginedid);
+
+                             PreparedStatement calps = conn.prepareStatement(cal);
+
+                            calps.setInt(1, i + 1);
+
+                            ResultSet weightrs = weightps.executeQuery();
+                            ResultSet setrs = setps.executeQuery();
+                            ResultSet calrs = calps.executeQuery();
+
+
+                            if (setrs.next()) {
+                            setnum = setrs.getInt(1);
+                            }
+
+                            if (weightrs.next()) {
+                            weightnum = weightrs.getInt(1);
+                            }
+
+                            if (calrs.next()) {
+                            calnum = calrs.getInt(1);
+                            }
+                            }catch (SQLException e5){
+                            e5.printStackTrace();
+                            }
 
                     PreparedStatement comps = conn.prepareStatement(complete);
-
-                    int i  = execlist.indexOf(execname);
-
-                    PreparedStatement setps = conn.prepareStatement(totalset);
-
-                    setps.setDate(1,Date.valueOf(dateLabel.getText()));
-                    setps.setInt(2, i+1);
-                    setps.setString(3, loginedid);
-
-                    PreparedStatement weightps = conn.prepareStatement(weight);
-
-                    weightps.setString(1, loginedid);
-
-                    PreparedStatement  calps = conn.prepareStatement(cal);
-
-                    calps.setInt(1, i);
-
-                    ResultSet weightrs = weightps.executeQuery();
-                    ResultSet setrs = setps.executeQuery();
-                    ResultSet calrs = calps.executeQuery();
-
-
-                    int setnum=0, weightnum=0, calnum=0;
-
-                    if(setrs.next()){
-                        setnum = setrs.getInt(1);
-                    }
-
-                    if(weightrs.next()){
-                        weightnum = weightrs.getInt(1);
-                    }
-
-                    if(calrs.next()){
-                        calnum = calrs.getInt(1);
-                    }
-
                     // Complete값 1로 저장
                     comps.setInt(1,1);
                     // 사용자 정보와 운동정보를 이용하여 칼로리 계산
@@ -713,6 +721,39 @@ public class RecordPanel extends JPanel implements ActionListener {
                     JOptionPane.showMessageDialog(null, "운동기록 실패", "실패", JOptionPane.INFORMATION_MESSAGE);
                 }
 
+            }
+        });
+
+        delbtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try{
+                    String delsql = "delete from ExecRecord where userid=? AND ExecDate = DATE(?) AND SetCount > 1 AND Execid = ?";
+                    PreparedStatement delps = conn.prepareStatement(delsql);
+                    delps.setString(1,loginedid);
+                    delps.setDate(2,Date.valueOf(dateLabel.getText()));
+                    int i  = execlist.indexOf(execname);
+                    delps.setInt(3, i+1);
+                    delps.executeUpdate();
+
+                    String completezero = "UPDATE UserExec SET Complete = ?, Totalcalories = ?, Totalvolume = ? WHERE RecordDate = DATE(?) AND Execid = ? AND Userid = ?";
+                    PreparedStatement czps = conn.prepareStatement(completezero);
+                    czps.setInt(1, 0);
+                    czps.setInt(2,0);
+                    czps.setInt(3,0);
+                    czps.setDate(4,Date.valueOf(dateLabel.getText()));
+                    czps.setInt(5,i+1);
+                    czps.setString(6,loginedid);
+
+                    czps.executeUpdate();
+
+                    JOptionPane.showMessageDialog(null, "운동기록 삭제 성공", "성공", JOptionPane.INFORMATION_MESSAGE);
+
+                }catch (SQLException e3){
+                    e3.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "운동기록 삭제 실패", "실패", JOptionPane.INFORMATION_MESSAGE);
+
+                }
             }
         });
 
