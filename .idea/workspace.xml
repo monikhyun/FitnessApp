@@ -4,10 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="발생 오류 수정">
+    <list default="true" id="2516ab06-c023-473d-bd8f-d9f4bc96a022" name="변경" comment="삭제 기능 추가">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/CalenderPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/CalenderPanel.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/FitnessApp.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/FitnessApp.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/RecordPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/StatsPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/StatsPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/UserPanel.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/UserPanel.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/FitnessApp/src/com/example/diet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/FitnessApp/src/com/example/diet.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -203,7 +207,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733531102498</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="삭제 기능 추가">
+      <option name="closed" value="true" />
+      <created>1733790998412</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1733790998412</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -229,14 +241,15 @@
     <MESSAGE value="LAF 라이브러리 파일 추가" />
     <MESSAGE value="파일 정리" />
     <MESSAGE value="발생 오류 수정" />
-    <option name="LAST_COMMIT_MESSAGE" value="발생 오류 수정" />
+    <MESSAGE value="삭제 기능 추가" />
+    <option name="LAST_COMMIT_MESSAGE" value="삭제 기능 추가" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="java-method">
           <url>file://$PROJECT_DIR$/src/FitnessApp/src/com/example/Main.java</url>
-          <line>700</line>
+          <line>699</line>
           <properties class="com.example.FindPassword">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />

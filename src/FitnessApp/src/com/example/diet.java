@@ -1,4 +1,4 @@
-package JavaProject;
+package com.example;
 
 import java.awt.*;
 import java.awt.event.ActionEvent;
